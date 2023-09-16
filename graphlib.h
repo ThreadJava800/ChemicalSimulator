@@ -4,7 +4,9 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 
-const double DEFAULT_SIZE = 5;
+const double DEFAULT_SIZE  = 5;
+const sf::Color CIRCLE_COL = sf::Color::Blue;
+const sf::Color SQUARE_COL = sf::Color::Red;
 
 enum MoleculeType {
     ERROR_TYPE,
@@ -23,7 +25,7 @@ protected:
 public:
     explicit BaseMolecule(double x, double y, double size, unsigned int weight, MoleculeType type);
 
-    virtual void draw() = 0;
+    virtual void draw(sf::RenderTexture& texture) = 0;
 };
 
 class CircleMolecule : BaseMolecule {
@@ -33,7 +35,7 @@ public:
 
     ~CircleMolecule();
 
-    void draw() override;
+    void draw(sf::RenderTexture& texture) override;
 };
 
 class SquareMolecule : BaseMolecule {
@@ -43,7 +45,7 @@ public:
 
     ~SquareMolecule();
 
-    void draw() override;
+    void draw(sf::RenderTexture& texture) override;
 };
 
 class Manager {
@@ -55,8 +57,10 @@ public:
     explicit Manager();
     explicit Manager(BaseMolecule* molecules, size_t moleculeCount);
 
-    void drawAll();
-    void checkCollision();
+    void drawAll(sf::RenderWindow& window);
+    void checkCollision(BaseMolecule& molecule1, BaseMolecule& molecule2);
+    void addMolecule(BaseMolecule& molecule);
+    void removeMolecule(BaseMolecule& molecule);
 };
 
 #define ON_ERROR(expr, errStr, retVal) {                 \

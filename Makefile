@@ -25,6 +25,7 @@ erase:
 
 compile:
 	@${CC} ${CFLAGS} $(SOURCES) -o $(EXECUTABLE) $(SFML_EXEC)
+	@${MAKE} -C LinkedList
 
 run:
 	@./${EXECUTABLE}

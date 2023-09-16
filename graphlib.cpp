@@ -22,8 +22,14 @@ CircleMolecule::~CircleMolecule() {
     this->type   = ERROR_TYPE;
 }
 
-void CircleMolecule::draw() {
+void CircleMolecule::draw(sf::RenderTexture& texture) {
+    ON_ERROR(!this, "Object pointer was null!",);
 
+    sf::CircleShape shape(this->size);
+    shape.setPosition(this->x, this->y);
+    shape.setFillColor(CIRCLE_COL);
+
+    texture.draw(shape);
 }
 
 SquareMolecule::SquareMolecule() : BaseMolecule(0, 0, 0, 0, SQUARE) {}
@@ -40,8 +46,14 @@ SquareMolecule::~SquareMolecule() {
     this->type   = ERROR_TYPE;
 }
 
-void SquareMolecule::draw() {
+void SquareMolecule::draw(sf::RenderTexture& texture) {
+    ON_ERROR(!this, "Object pointer was null!",);
 
+    sf::RectangleShape shape(sf::Vector2f(this->size, this->size));
+    shape.setPosition(this->x, this->y);
+    shape.setFillColor(SQUARE_COL);
+
+    texture.draw(shape);
 }
 
 Manager::Manager() :
@@ -54,10 +66,10 @@ Manager::Manager(BaseMolecule* molecules, size_t moleculeCount) :
     moleculeCount(moleculeCount)
     {}
 
-void Manager::drawAll() {
+void Manager::drawAll(sf::RenderWindow& window) {
 
 }
 
-void Manager::checkCollision() {
+void Manager::checkCollision(BaseMolecule& molecule1, BaseMolecule& molecule2) {
 
 }
