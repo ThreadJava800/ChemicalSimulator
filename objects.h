@@ -51,7 +51,6 @@ public:
 class SquareMolecule : public BaseMolecule {
 public:
     explicit SquareMolecule();
-    explicit SquareMolecule(unsigned int weight);
     explicit SquareMolecule(double x, double y, unsigned int weight);
 
     ~SquareMolecule();

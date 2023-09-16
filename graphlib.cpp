@@ -165,10 +165,11 @@ void Manager::drawAll(sf::RenderTexture& texture) {
     frame.setPosition(FRAME_WIDTH, FRAME_WIDTH);
     texture.draw(frame);
 
-    for (long i = 0; i <= this->molecules->size; i++) {
-        for (long j = 0; j <= this->molecules->size; j++) {
-            if (i != j)
-                checkCollision(texture, i, j);
+    long moleculeCount = this->molecules->size;
+
+    for (long i = 0; i <= moleculeCount; i++) {
+        for (long j = i + 1; j <= moleculeCount; j++) {
+            checkCollision(texture, i, j);
         }
     }
 
@@ -201,50 +202,14 @@ void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
 
     if (!molecule1 || !molecule2) return;
 
-    if (!(molecule1->getX() <= molecule2->getX() && molecule2->getX() <= molecule1->getX() + molecule1->getSize() &&
-        molecule1->getY() <= molecule2->getY() && molecule2->getY() <= molecule1->getY() + molecule1->getSize()))
-        return;
-
-    // creating new molecules TODO: remake
-    double centreX = (texture.getSize().x - DEFAULT_SIZE) / 2;
-    double centreY = (texture.getSize().y + DEFAULT_SIZE) / 2;
-
     if (molecule1->getType() == CIRCLE && molecule2->getType() == CIRCLE) {
-        listPushBack(listPointer, new SquareMolecule(centreX, centreY, molecule1->getWeight() + molecule2->getWeight()));
-        listRemove(listPointer, ind1);
-        listRemove(listPointer, ind2);
+        if ((molecule1->getX() <= molecule2->getX() && molecule2->getX() <= molecule1->getX() + 2 * molecule1->getSize()) &&
+            (molecule1->getY() <= molecule2->getY() && molecule2->getY() <= molecule1->getY() + 2 * molecule1->getSize())) {
+                listPushBack(listPointer, new SquareMolecule(0, 0, molecule1->getWeight() + molecule2->getWeight()));
 
-        delete molecule1;
-        delete molecule2;
-        return;
-    }
-    if (molecule1->getType() == CIRCLE && molecule2->getType() == SQUARE) {
-        molecule2->addWeight(molecule1->getWeight());
-
-        listRemove(listPointer, ind1);
-        delete molecule1;
-        return;
-    }
-    if (molecule1->getType() == SQUARE && molecule2->getType() == CIRCLE) {
-        molecule1->addWeight(molecule2->getWeight());
-
-        listRemove(listPointer, ind2);
-        delete molecule2;
-        return;
-    }
-    if (molecule1->getType() == SQUARE && molecule2->getType() == SQUARE) {
-        unsigned int circleAmount = molecule1->getWeight() + molecule2->getWeight();
-        
-        listRemove(listPointer, ind1);
-        delete molecule1;
-
-        listRemove(listPointer, ind2);
-        delete molecule2;
-
-        for (unsigned int i = 0; i < circleAmount; i++) {
-            addMolecule(texture);
-        }
-        return;
+                listPointer->values[ind1].value = nullptr;
+                listPointer->values[ind2].value = nullptr;
+            }
     }
 }
 
