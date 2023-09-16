@@ -210,6 +210,31 @@ void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
                 listPointer->values[ind1].value = nullptr;
                 listPointer->values[ind2].value = nullptr;
             }
+        return;
+    }
+    if (molecule1->getType() == CIRCLE && molecule2->getType() == SQUARE) {
+        if ((molecule1->getX() <= molecule2->getX() && molecule2->getX() <= molecule1->getX() + 2 * molecule1->getSize()) &&
+            (molecule1->getY() <= molecule2->getY() && molecule2->getY() <= molecule1->getY() + 2 * molecule1->getSize())) {
+                listPointer->values[ind1].value = nullptr;
+                listPointer->values[ind2].value->addWeight(molecule1->getWeight());
+            }
+        return;
+    }
+    if (molecule1->getType() == SQUARE && molecule2->getType() == CIRCLE) {
+        if ((molecule1->getX() <= molecule2->getX() && molecule2->getX() <= molecule1->getX() + 2 * molecule1->getSize()) &&
+            (molecule1->getY() <= molecule2->getY() && molecule2->getY() <= molecule1->getY() + 2 * molecule1->getSize())) {
+                listPointer->values[ind2].value = nullptr;
+                listPointer->values[ind1].value->addWeight(molecule2->getWeight());
+            }
+        return;
+    }
+    if (molecule1->getType() == SQUARE && molecule2->getType() == SQUARE) {
+        if ((molecule1->getX() <= molecule2->getX() && molecule2->getX() <= molecule1->getX() + 2 * molecule1->getSize()) &&
+            (molecule1->getY() <= molecule2->getY() && molecule2->getY() <= molecule1->getY() + 2 * molecule1->getSize())) {
+                listPointer->values[ind2].value = nullptr;
+                listPointer->values[ind1].value->addWeight(molecule1->getWeight());
+            }
+        return;
     }
 }
 
