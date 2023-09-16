@@ -1,67 +1,35 @@
 #ifndef _GRAPH_h_
 #define _GRAPH_h_
 
-#include <SFML/Graphics.hpp>
 #include <cmath>
+#include <iostream>
 
-const double DEFAULT_SIZE  = 5;
-const sf::Color CIRCLE_COL = sf::Color::Blue;
-const sf::Color SQUARE_COL = sf::Color::Red;
+#include "LinkedList/list.h"
+#include "objects.h"
 
-enum MoleculeType {
-    ERROR_TYPE,
-    SQUARE,
-    CIRCLE
-};
-
-class BaseMolecule {
-protected:
-    double       x      = 0;
-    double       y      = 0;
-    double       size   = 0;
-    unsigned int weight = 0;
-    MoleculeType type   = ERROR_TYPE;
-
-public:
-    explicit BaseMolecule(double x, double y, double size, unsigned int weight, MoleculeType type);
-
-    virtual void draw(sf::RenderTexture& texture) = 0;
-};
-
-class CircleMolecule : BaseMolecule {
-public:
-    explicit CircleMolecule();
-    explicit CircleMolecule(double x, double y, unsigned int weight);
-
-    ~CircleMolecule();
-
-    void draw(sf::RenderTexture& texture) override;
-};
-
-class SquareMolecule : BaseMolecule {
-public:
-    explicit SquareMolecule();
-    explicit SquareMolecule(double x, double y, unsigned int weight);
-
-    ~SquareMolecule();
-
-    void draw(sf::RenderTexture& texture) override;
-};
+const double       DEFAULT_SIZE   = 50;
+const int          FRAME_WIDTH    = 10;
+const unsigned int DEFAULT_WEIGHT = 1;
+const sf::Color    CIRCLE_COL     = sf::Color::Blue;
+const sf::Color    SQUARE_COL     = sf::Color::Red;
 
 class Manager {
 private:
-    BaseMolecule* molecules     = nullptr;
-    size_t        moleculeCount = 0;
+    List_t* molecules = nullptr;
 
 public:
     explicit Manager();
-    explicit Manager(BaseMolecule* molecules, size_t moleculeCount);
+    explicit Manager(List_t* molecules);
 
-    void drawAll(sf::RenderWindow& window);
-    void checkCollision(BaseMolecule& molecule1, BaseMolecule& molecule2);
-    void addMolecule(BaseMolecule& molecule);
-    void removeMolecule(BaseMolecule& molecule);
+    ~Manager();
+
+    void drawAll       (sf::RenderTexture& texture);
+    void moveAll       (sf::RenderTexture& texture);
+    void checkCollision(sf::RenderTexture& texture, long ind1, long ind2);
+    void addMolecule   (sf::RenderTexture& texture);
 };
+
+List_t* createEmptyList();
 
 #define ON_ERROR(expr, errStr, retVal) {                 \
     if (expr) {                                           \

@@ -12,7 +12,7 @@ CFLAGS  = -D _DEBUG -ggdb3 -std=c++17 -O3 -w -Wall -Wextra -Weffc++ -Waggressive
 -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
 
 
-SOURCES=graphlib.cpp main.cpp
+SOURCES=LinkedList/list.cpp graphlib.cpp main.cpp
 
 EXECUTABLE=sim
 
@@ -25,7 +25,6 @@ erase:
 
 compile:
 	@${CC} ${CFLAGS} $(SOURCES) -o $(EXECUTABLE) $(SFML_EXEC)
-	@${MAKE} -C LinkedList
 
 run:
 	@./${EXECUTABLE}
