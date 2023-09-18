@@ -42,10 +42,10 @@ void BaseMolecule::setSpeed(double velX, double velY) {
     this->velocityY *= velY;
 }
 
-void BaseMolecule::move(sf::RenderTexture& texture) {
+void BaseMolecule::move(sf::RenderTexture& texture, double press) {
     ON_ERROR(!this, "Object pointer was null!",);
 
-    this->wallCollision(texture);
+    this->wallCollision(texture, press);
 
     this->x += velocityX;
     this->y += velocityY;
@@ -80,14 +80,14 @@ void CircleMolecule::draw(sf::RenderTexture& texture) {
     texture.draw(shape);
 }
 
-void CircleMolecule::wallCollision(sf::RenderTexture& texture) {
+void CircleMolecule::wallCollision(sf::RenderTexture& texture, double press) {
     ON_ERROR(!this, "Object pointer was null!",);
 
     double rightWall = texture.getSize().x - FRAME_WIDTH;
     double downWall  = texture.getSize().y - FRAME_WIDTH;
 
     if (this->x <= FRAME_WIDTH) this->velocityX = fabs(this->velocityX);
-    if (this->y <= FRAME_WIDTH) this->velocityY = fabs(this->velocityY);    
+    if (this->y <= FRAME_WIDTH + press) this->velocityY = fabs(this->velocityY);    
 
     if (this->x + this->size * 2 >= rightWall) this->velocityX = -1 * fabs(this->velocityX);
     if (this->y + this->size * 2 >= downWall)  this->velocityY = -1 * fabs(this->velocityY);
@@ -117,14 +117,14 @@ void SquareMolecule::draw(sf::RenderTexture& texture) {
     texture.draw(shape);
 }
 
-void SquareMolecule::wallCollision(sf::RenderTexture& texture) {
+void SquareMolecule::wallCollision(sf::RenderTexture& texture, double press) {
     ON_ERROR(!this, "Object pointer was null!",);
 
     double rightWall = texture.getSize().x - FRAME_WIDTH;
     double downWall  = texture.getSize().y - FRAME_WIDTH;
 
     if (this->x <= FRAME_WIDTH) this->velocityX = fabs(this->velocityX);
-    if (this->y <= FRAME_WIDTH) this->velocityY = fabs(this->velocityY);    
+    if (this->y <= FRAME_WIDTH + press) this->velocityY = fabs(this->velocityY);    
 
     if (this->x + this->size >= rightWall) this->velocityX = -1 * fabs(this->velocityX);
     if (this->y + this->size >= downWall)  this->velocityY = -1 * fabs(this->velocityY);
@@ -142,11 +142,13 @@ double generateRandDouble(double left, double right) {
 }
 
 Manager::Manager() :
-    molecules    (createEmptyList())
+    molecules(createEmptyList()),
+    pressY   (FRAME_WIDTH)    
     {}
 
-Manager::Manager(List_t* molecules) :
-    molecules    (molecules)
+Manager::Manager(List_t* molecules, double pressY) :
+    molecules(molecules),
+    pressY   (pressY + FRAME_WIDTH)
     {}
 
 Manager::~Manager() {
@@ -176,6 +178,14 @@ void Manager::drawAll(sf::RenderTexture& texture) {
     frame.setPosition(FRAME_WIDTH, FRAME_WIDTH);
     texture.draw(frame);
 
+    // draw press
+    sf::RectangleShape press = sf::RectangleShape(sf::Vector2f(texture.getSize().x - 2 * FRAME_WIDTH, FRAME_WIDTH));
+    press.setFillColor   (sf::Color::Transparent);
+    press.setOutlineColor(sf::Color::Red);
+    press.setOutlineThickness(FRAME_WIDTH);
+    press.setPosition(FRAME_WIDTH, this->pressY);
+    texture.draw(press);
+
     long moleculeCount = this->molecules->size;
 
     for (long i = 0; i <= moleculeCount; i++) {
@@ -197,7 +207,7 @@ void Manager::moveAll(sf::RenderTexture& texture) {
 
     for (long i = 0; i <= this->molecules->size; i++) {
         BaseMolecule* molecule = this->molecules->values[i].value;
-        if (molecule) molecule->move(texture);
+        if (molecule) molecule->move(texture, this->pressY);
     }
 }
 
@@ -299,17 +309,15 @@ void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
                 listPointer->values[ind1].value = nullptr;
 
                 double angle = 2 * M_PI / circleAmount;
-                std::cout << "Start\n";
                 for (unsigned int i = 0; i < circleAmount; i++) {
                     double speedY = cos(angle * i);
                     double speedX = sin(angle * i);
 
                     double circleX = createCrlcPointX + diameter * speedX;
                     double circleY = createCrlcPointY + diameter * speedY;
-                    
+
                     addMolecule(texture, circleX, circleY, speedX, speedY);
                 }
-                std::cout << "End\n";
             }
         return;
     }

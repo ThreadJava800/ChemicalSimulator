@@ -16,10 +16,11 @@ const sf::Color    SQUARE_COL     = sf::Color::Red;
 class Manager {
 private:
     List_t* molecules = nullptr;
+    double  pressY    = 0;
 
 public:
     explicit Manager();
-    explicit Manager(List_t* molecules);
+    explicit Manager(List_t* molecules, double pressY);
 
     ~Manager();
 
@@ -33,9 +34,9 @@ List_t* createEmptyList();
 
 double generateRandDouble(double left, double right);
 
-bool collideCircles     (BaseMolecule* mol1, BaseMolecule* mol2);
+bool collideCircles     (BaseMolecule* mol1,   BaseMolecule* mol2);
 bool collideSquareCircle(BaseMolecule* square, BaseMolecule* circle);
-bool collideSquares     (BaseMolecule* mol1, BaseMolecule* mol2);
+bool collideSquares     (BaseMolecule* mol1,   BaseMolecule* mol2);
 
 #define ON_ERROR(expr, errStr, retVal) {                 \
     if (expr) {                                           \

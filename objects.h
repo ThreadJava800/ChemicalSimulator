@@ -24,7 +24,7 @@ protected:
 public:
     explicit BaseMolecule(double x, double y, double size, unsigned int weight, MoleculeType type);
     
-    void move     (sf::RenderTexture& texture);
+    void move     (sf::RenderTexture& texture, double press);
     void addWeight(unsigned int weightAdd);
 
     double       getX     ();
@@ -36,7 +36,7 @@ public:
     void setSpeed(double velX, double velY);
 
     virtual void draw(sf::RenderTexture& texture) = 0;
-    virtual void wallCollision(sf::RenderTexture& texture) = 0;
+    virtual void wallCollision(sf::RenderTexture& texture, double press) = 0;
 };
 
 class CircleMolecule : public BaseMolecule {
@@ -46,8 +46,8 @@ public:
 
     ~CircleMolecule();
 
-    void draw         (sf::RenderTexture& texture) override;
-    void wallCollision(sf::RenderTexture& texture) override;
+    void draw         (sf::RenderTexture& texture)               override;
+    void wallCollision(sf::RenderTexture& texture, double press) override;
 };
 
 class SquareMolecule : public BaseMolecule {
@@ -57,8 +57,8 @@ public:
 
     ~SquareMolecule();
 
-    void draw         (sf::RenderTexture& texture) override;
-    void wallCollision(sf::RenderTexture& texture) override;
+    void draw         (sf::RenderTexture& texture)               override;
+    void wallCollision(sf::RenderTexture& texture, double press) override;
 };
 
 #endif
