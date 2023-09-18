@@ -31,6 +31,10 @@ public:
 
 List_t* createEmptyList();
 
+bool collideCircles     (BaseMolecule* mol1, BaseMolecule* mol2);
+bool collideSquareCircle(BaseMolecule* square, BaseMolecule* circle);
+bool collideSquares     (BaseMolecule* mol1, BaseMolecule* mol2);
+
 #define ON_ERROR(expr, errStr, retVal) {                 \
     if (expr) {                                           \
         fprintf(stderr, "FATAL ERROR: %s\n", errStr);      \

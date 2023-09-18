@@ -16,6 +16,12 @@ int main() {
     moleculeManager.addMolecule(moleculeTexture);
     moleculeManager.addMolecule(moleculeTexture);
     moleculeManager.addMolecule(moleculeTexture);
+    moleculeManager.addMolecule(moleculeTexture);
+    moleculeManager.addMolecule(moleculeTexture);
+    moleculeManager.addMolecule(moleculeTexture);
+    moleculeManager.addMolecule(moleculeTexture);
+    moleculeManager.addMolecule(moleculeTexture);
+
 
     sf::Sprite moleculeSprite(moleculeTexture.getTexture());
     moleculeSprite.setPosition(0, 0);

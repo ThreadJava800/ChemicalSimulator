@@ -190,6 +190,56 @@ void Manager::moveAll(sf::RenderTexture& texture) {
     }
 }
 
+bool collideCircles(BaseMolecule* mol1, BaseMolecule* mol2) {
+    ON_ERROR(!mol1 || !mol2, "Object pointer was null!", false);
+
+    double centre1x = mol1->getX() + mol1->getSize();
+    double centre1y = mol1->getY() + mol1->getSize();
+    double centre2x = mol2->getX() + mol2->getSize();
+    double centre2y = mol2->getY() + mol2->getSize();
+
+    double radSum = mol1->getSize() + mol2->getSize();
+
+    return (centre1x - centre2x) * (centre1x - centre2x) 
+         + (centre1y - centre2y) * (centre1y - centre2y) <= radSum * radSum;
+}
+
+bool collideSquareCircle(BaseMolecule* square, BaseMolecule* circle) {
+    ON_ERROR(!square || !circle, "Object pointer was null!", false);
+
+    double rectCentreX = square->getX() + square->getSize() / 2;
+    double rectCentreY = square->getY() + square->getSize() / 2;
+    double circCentreX = circle->getX() + circle->getSize();
+    double circCentreY = circle->getY() + circle->getSize();
+
+    double distanceX = abs(rectCentreX - circCentreX);
+    double distanceY = abs(rectCentreY - circCentreY);
+
+    if ((distanceX > square->getSize() / 2 + circle->getSize()) ||
+        (distanceY > square->getSize() / 2 + circle->getSize())) return false;
+
+    if ((distanceX <= square->getSize() / 2) ||
+        (distanceY <= square->getSize() / 2)) return true;
+
+    double distToCorner = 
+        2 * (circCentreX - square->getSize() / 2) * (circCentreX - square->getSize() / 2); 
+
+    return distToCorner <= circle->getSize() * circle->getSize();
+        
+}
+
+bool collideSquares(BaseMolecule* mol1, BaseMolecule* mol2) {
+    ON_ERROR(!mol1 || !mol2, "Object pointer was null!", false);
+
+    double mol1CentreX = mol1->getX() + mol1->getSize();
+    double mol1CentreY = mol1->getY() + mol1->getSize();
+    double mol2CentreX = mol2->getX() + mol2->getSize();
+    double mol2CentreY = mol2->getY() + mol2->getSize();
+
+    return (abs(mol1CentreX - mol2CentreX) < mol1->getSize() / 2 + mol2->getSize() / 2) &&
+           (abs(mol1CentreY - mol2CentreY) < mol1->getSize() / 2 + mol2->getSize() / 2);
+}
+
 void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
@@ -203,34 +253,29 @@ void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
     if (!molecule1 || !molecule2) return;
 
     if (molecule1->getType() == CIRCLE && molecule2->getType() == CIRCLE) {
-        if ((molecule1->getX() <= molecule2->getX() && molecule2->getX() <= molecule1->getX() + 2 * molecule1->getSize()) &&
-            (molecule1->getY() <= molecule2->getY() && molecule2->getY() <= molecule1->getY() + 2 * molecule1->getSize())) {
-                listPushBack(listPointer, new SquareMolecule(0, 0, molecule1->getWeight() + molecule2->getWeight()));
-
-                listPointer->values[ind1].value = nullptr;
-                listPointer->values[ind2].value = nullptr;
-            }
+        if (collideCircles(molecule1, molecule2)) {
+            listPushBack(listPointer, new SquareMolecule(0, 0, molecule1->getWeight() + molecule2->getWeight()));
+            listPointer->values[ind1].value = nullptr;
+            listPointer->values[ind2].value = nullptr;
+        }
         return;
     }
     if (molecule1->getType() == CIRCLE && molecule2->getType() == SQUARE) {
-        if ((molecule1->getX() <= molecule2->getX() && molecule2->getX() <= molecule1->getX() + 2 * molecule1->getSize()) &&
-            (molecule1->getY() <= molecule2->getY() && molecule2->getY() <= molecule1->getY() + 2 * molecule1->getSize())) {
+        if (collideSquareCircle(molecule2, molecule1)) {
                 listPointer->values[ind1].value = nullptr;
                 listPointer->values[ind2].value->addWeight(molecule1->getWeight());
             }
         return;
     }
     if (molecule1->getType() == SQUARE && molecule2->getType() == CIRCLE) {
-        if ((molecule1->getX() <= molecule2->getX() && molecule2->getX() <= molecule1->getX() + 2 * molecule1->getSize()) &&
-            (molecule1->getY() <= molecule2->getY() && molecule2->getY() <= molecule1->getY() + 2 * molecule1->getSize())) {
+        if (collideSquareCircle(molecule1, molecule2)) {
                 listPointer->values[ind2].value = nullptr;
                 listPointer->values[ind1].value->addWeight(molecule2->getWeight());
             }
         return;
     }
     if (molecule1->getType() == SQUARE && molecule2->getType() == SQUARE) {
-        if ((molecule1->getX() <= molecule2->getX() && molecule2->getX() <= molecule1->getX() + 2 * molecule1->getSize()) &&
-            (molecule1->getY() <= molecule2->getY() && molecule2->getY() <= molecule1->getY() + 2 * molecule1->getSize())) {
+        if (collideSquares(molecule1, molecule2)) {
                 listPointer->values[ind2].value = nullptr;
                 listPointer->values[ind1].value->addWeight(molecule1->getWeight());
             }
