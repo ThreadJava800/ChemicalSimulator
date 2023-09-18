@@ -11,16 +11,26 @@ int main() {
     moleculeTexture.setSmooth(true);
 
     Manager moleculeManager = Manager();
-    moleculeManager.addMolecule(moleculeTexture);
-    moleculeManager.addMolecule(moleculeTexture);
-    moleculeManager.addMolecule(moleculeTexture);
-    moleculeManager.addMolecule(moleculeTexture);
-    moleculeManager.addMolecule(moleculeTexture);
-    moleculeManager.addMolecule(moleculeTexture);
-    moleculeManager.addMolecule(moleculeTexture);
-    moleculeManager.addMolecule(moleculeTexture);
-    moleculeManager.addMolecule(moleculeTexture);
-    moleculeManager.addMolecule(moleculeTexture);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
+    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
 
 
     sf::Sprite moleculeSprite(moleculeTexture.getTexture());

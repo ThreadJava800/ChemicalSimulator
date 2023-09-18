@@ -7,7 +7,7 @@
 #include "LinkedList/list.h"
 #include "objects.h"
 
-const double       DEFAULT_SIZE   = 50;
+const double       DEFAULT_SIZE   = 25;
 const int          FRAME_WIDTH    = 10;
 const unsigned int DEFAULT_WEIGHT = 1;
 const sf::Color    CIRCLE_COL     = sf::Color::Blue;
@@ -26,10 +26,12 @@ public:
     void drawAll       (sf::RenderTexture& texture);
     void moveAll       (sf::RenderTexture& texture);
     void checkCollision(sf::RenderTexture& texture, long ind1, long ind2);
-    void addMolecule   (sf::RenderTexture& texture);
+    void addMolecule   (sf::RenderTexture& texture, double x, double y, double velX = 1, double velY = 1);
 };
 
 List_t* createEmptyList();
+
+double generateRandDouble(double left, double right);
 
 bool collideCircles     (BaseMolecule* mol1, BaseMolecule* mol2);
 bool collideSquareCircle(BaseMolecule* square, BaseMolecule* circle);

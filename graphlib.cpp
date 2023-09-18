@@ -35,6 +35,13 @@ double BaseMolecule::getWeight() {
     return this->weight;
 }
 
+void BaseMolecule::setSpeed(double velX, double velY) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->velocityX *= velX;
+    this->velocityY *= velY;
+}
+
 void BaseMolecule::move(sf::RenderTexture& texture) {
     ON_ERROR(!this, "Object pointer was null!",);
 
@@ -128,6 +135,10 @@ List_t* createEmptyList() {
     _listCtor(list, 2, true);
 
     return list;
+}
+
+double generateRandDouble(double left, double right) {
+    return ((rand() % 10) / (double)10) * (right - left) + left;
 }
 
 Manager::Manager() :
@@ -254,7 +265,10 @@ void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
 
     if (molecule1->getType() == CIRCLE && molecule2->getType() == CIRCLE) {
         if (collideCircles(molecule1, molecule2)) {
-            listPushBack(listPointer, new SquareMolecule(0, 0, molecule1->getWeight() + molecule2->getWeight()));
+            double createX = (molecule1->getX() + molecule2->getX()) / 2;
+            double createY = (molecule1->getY() + molecule2->getY()) / 2;
+
+            listPushBack(listPointer, new SquareMolecule(createX, createY, molecule1->getWeight() + molecule2->getWeight()));
             listPointer->values[ind1].value = nullptr;
             listPointer->values[ind2].value = nullptr;
         }
@@ -276,20 +290,37 @@ void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
     }
     if (molecule1->getType() == SQUARE && molecule2->getType() == SQUARE) {
         if (collideSquares(molecule1, molecule2)) {
+                unsigned int circleAmount = molecule1->getWeight() + molecule2->getWeight();
+                double createCrlcPointX = (molecule1->getX() + molecule2->getX()) / 2;
+                double createCrlcPointY = (molecule1->getY() + molecule2->getY()) / 2;
+                double diameter = molecule1->getSize() * 2;
+
                 listPointer->values[ind2].value = nullptr;
-                listPointer->values[ind1].value->addWeight(molecule1->getWeight());
+                listPointer->values[ind1].value = nullptr;
+
+                double angle = 2 * M_PI / circleAmount;
+                std::cout << "Start\n";
+                for (unsigned int i = 0; i < circleAmount; i++) {
+                    double speedY = cos(angle * i);
+                    double speedX = sin(angle * i);
+
+                    double circleX = createCrlcPointX + diameter * speedX;
+                    double circleY = createCrlcPointY + diameter * speedY;
+                    
+                    addMolecule(texture, circleX, circleY, speedX, speedY);
+                }
+                std::cout << "End\n";
             }
         return;
     }
 }
 
-void Manager::addMolecule(sf::RenderTexture& texture) {
+void Manager::addMolecule(sf::RenderTexture& texture, double x, double y, double velX, double velY) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
 
-    int centreX = rand() % texture.getSize().x;
-    int centreY = rand() % texture.getSize().y;
-    CircleMolecule* molecule = new CircleMolecule(centreX, centreY, DEFAULT_WEIGHT);
+    CircleMolecule* molecule = new CircleMolecule(x, y, DEFAULT_WEIGHT);
+    molecule->setSpeed(velX, velY);
 
     listPushBack(this->molecules, molecule);
 }

@@ -33,6 +33,8 @@ public:
     double       getWeight();
     MoleculeType getType  ();
 
+    void setSpeed(double velX, double velY);
+
     virtual void draw(sf::RenderTexture& texture) = 0;
     virtual void wallCollision(sf::RenderTexture& texture) = 0;
 };
