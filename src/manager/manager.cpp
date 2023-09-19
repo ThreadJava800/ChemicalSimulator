@@ -11,14 +11,18 @@ double generateRandDouble(double left, double right) {
     return ((rand() % 10) / (double)10) * (right - left) + left;
 }
 
-Manager::Manager() :
+Manager::Manager(Button** buttons, unsigned int btnCnt) :
     molecules(createEmptyList()),
-    pressY   (FRAME_WIDTH)    
+    pressY   (FRAME_WIDTH),
+    buttons  (buttons),
+    btnCnt   (btnCnt) 
     {}
 
-Manager::Manager(List_t* molecules, double pressY) :
+Manager::Manager(List_t* molecules, double pressY, Button** buttons, unsigned int btnCnt) :
     molecules(molecules),
-    pressY   (pressY + FRAME_WIDTH)
+    pressY   (pressY + FRAME_WIDTH),
+    buttons  (buttons),
+    btnCnt   (btnCnt)
     {}
 
 Manager::~Manager() {
@@ -36,42 +40,59 @@ Manager::~Manager() {
     this->molecules = nullptr;
 }
 
-void Manager::drawAll(sf::RenderTexture& texture) {
+void Manager::drawMolecules(sf::RenderTexture& moleculeTexture) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
 
     // draw frame
-    sf::RectangleShape frame = sf::RectangleShape(sf::Vector2f(texture.getSize().x - 2 * FRAME_WIDTH, texture.getSize().y - 2 * FRAME_WIDTH));
+    sf::RectangleShape frame = sf::RectangleShape(sf::Vector2f(moleculeTexture.getSize().x - 2 * FRAME_WIDTH, moleculeTexture.getSize().y - 2 * FRAME_WIDTH));
     frame.setFillColor   (sf::Color::Transparent);
     frame.setOutlineColor(sf::Color::White);
     frame.setOutlineThickness(FRAME_WIDTH);
     frame.setPosition(FRAME_WIDTH, FRAME_WIDTH);
-    texture.draw(frame);
+    moleculeTexture.draw(frame);
 
     // draw press
-    sf::RectangleShape press = sf::RectangleShape(sf::Vector2f(texture.getSize().x - 2 * FRAME_WIDTH, FRAME_WIDTH));
+    sf::RectangleShape press = sf::RectangleShape(sf::Vector2f(moleculeTexture.getSize().x - 2 * FRAME_WIDTH, FRAME_WIDTH));
     press.setFillColor   (sf::Color::Transparent);
     press.setOutlineColor(sf::Color::Red);
     press.setOutlineThickness(FRAME_WIDTH);
     press.setPosition(FRAME_WIDTH, this->pressY);
-    texture.draw(press);
+    moleculeTexture.draw(press);
 
     long moleculeCount = this->molecules->size;
 
     for (long i = 0; i <= moleculeCount; i++) {
         for (long j = i + 1; j <= moleculeCount; j++) {
-            checkCollision(texture, i, j);
+            checkCollision(moleculeTexture, i, j);
         }
     }
 
     // draw molecules
     for (long i = 0; i <= this->molecules->size; i++) {
         BaseMolecule* molecule = this->molecules->values[i].value;
-        if (molecule) molecule->draw(texture);
+        if (molecule) molecule->draw(moleculeTexture);
     }
 }
 
-void Manager::moveAll(sf::RenderTexture& texture) {
+void Manager::drawButtons(sf::RenderTexture& buttonTexture) {
+    ON_ERROR(!this, "Object pointer was null!",);
+    ON_ERROR(!this->buttons, "Button array is null!",);
+
+    for (unsigned int i = 0; i < this->btnCnt; i++) {
+        // TODO: check on nullptr
+        this->buttons[i]->draw(buttonTexture);
+    }
+}
+
+void Manager::drawAll(sf::RenderTexture& moleculeTexture, sf::RenderTexture& buttonTexture) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    drawMolecules(moleculeTexture);
+    drawButtons  (buttonTexture);
+}
+
+void Manager::moveAllObjects(sf::RenderTexture& texture) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
 
@@ -151,6 +172,9 @@ void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
             listPushBack(listPointer, new SquareMolecule(createX, createY, molecule1->getWeight() + molecule2->getWeight()));
             listPointer->values[ind1].value = nullptr;
             listPointer->values[ind2].value = nullptr;
+
+            delete molecule1;
+            delete molecule2;
         }
         return;
     }
@@ -158,6 +182,8 @@ void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
         if (collideSquareCircle(molecule2, molecule1)) {
                 listPointer->values[ind1].value = nullptr;
                 listPointer->values[ind2].value->addWeight(molecule1->getWeight());
+
+                delete molecule1;
             }
         return;
     }
@@ -165,6 +191,8 @@ void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
         if (collideSquareCircle(molecule1, molecule2)) {
                 listPointer->values[ind2].value = nullptr;
                 listPointer->values[ind1].value->addWeight(molecule2->getWeight());
+
+                delete molecule2;
             }
         return;
     }
@@ -177,6 +205,9 @@ void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
 
                 listPointer->values[ind2].value = nullptr;
                 listPointer->values[ind1].value = nullptr;
+
+                delete molecule1;
+                delete molecule2;
 
                 double angle = 2 * M_PI / circleAmount;
                 for (unsigned int i = 0; i < circleAmount; i++) {
