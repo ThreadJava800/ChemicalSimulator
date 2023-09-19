@@ -25,6 +25,7 @@ public:
     ~Manager();
 
     void drawAll       (sf::RenderTexture& moleculeTexture, sf::RenderTexture& buttonTexture);
+    void registerClick (sf::RenderTexture& buttonTexture, sf::Vector2f spriteStart);
     void moveAllObjects(sf::RenderTexture& texture);
     void checkCollision(sf::RenderTexture& texture, long ind1, long ind2);
     void addMolecule   (sf::RenderTexture& texture, double x, double y, double velX = 1, double velY = 1);

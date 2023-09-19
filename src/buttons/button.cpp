@@ -24,6 +24,12 @@ Button::Button(double x, double y, double size, sf::Text* text, ButtonFunc onCli
     onClick (onClick)
     {}
 
+ButtonFunc Button::getFunc() {
+    ON_ERROR(!this, "Object pointer was null!", nullptr);
+
+    return this->onClick;
+}
+
 CircleButton::CircleButton(double x, double y, double size, ButtonFunc onClick) :
       Button(x, y, size, onClick) {}
 
@@ -46,7 +52,7 @@ void CircleButton::draw(sf::RenderTexture& drawTexture) {
     drawTexture.draw(circle);
 }
 
-bool CircleButton::isInside(sf::Vector2f mousePosition) {
+bool CircleButton::isInside(sf::Vector2i mousePosition) {
     ON_ERROR(!this, "Object pointer was null!", false);
 
     double centreX = this->x + this->size;
@@ -85,14 +91,11 @@ void SquareButton::draw(sf::RenderTexture& drawTexture) {
     drawTexture.draw(*this->text);
     drawTexture.draw(rect);
 }
-bool SquareButton::isInside(sf::Vector2f mousePosition) {
+bool SquareButton::isInside(sf::Vector2i mousePosition) {
     ON_ERROR(!this, "Object pointer was null!", false);
 
-    double centreX = this->x + this->size   / 2;
-    double centreY = this->y + this->height / 2;
+    std::cout << this->y << ' ' << this->y + this->size << '\n';
 
-    double shiftX = abs(mousePosition.x - centreX);
-    double shiftY = abs(mousePosition.y - centreY);
-
-    return (shiftX <= this->size / 2) && (shiftY <= this->height / 2);
+    return (this->x <= mousePosition.x && mousePosition.x <= this->x + this->size) && 
+           (this->y <= mousePosition.y && mousePosition.y <= this->y + this->height);
 }

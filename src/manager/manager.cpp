@@ -92,6 +92,24 @@ void Manager::drawAll(sf::RenderTexture& moleculeTexture, sf::RenderTexture& but
     drawButtons  (buttonTexture);
 }
 
+void Manager::registerClick (sf::RenderTexture& buttonTexture, sf::Vector2f spriteStart) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    for (unsigned int i = 0; i < this->btnCnt; i++) {
+        Button* btn = this->buttons[i];
+        if (btn) {
+            sf::Vector2i mousePositionTexture = sf::Mouse::getPosition() - sf::Vector2i(spriteStart) - sf::Vector2i(0, 2 * FRAME_WIDTH);
+
+            std::cout << mousePositionTexture.x << ' ' <<
+                         mousePositionTexture.y << '\n';
+
+            if (btn->isInside(mousePositionTexture)) {
+                (btn->getFunc())();
+            }
+        }
+    }
+}
+
 void Manager::moveAllObjects(sf::RenderTexture& texture) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);

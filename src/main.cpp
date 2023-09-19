@@ -79,6 +79,12 @@ int main() {
                 if (event.key.code == sf::Keyboard::Escape)
                     window.close();
                 break;
+            case sf::Event::MouseButtonPressed:
+                // std::cout << "Test";
+                if (event.mouseButton.button == sf::Mouse::Left) 
+                    // std::cout << "test";
+                    moleculeManager.registerClick(buttonTexture, buttonSprite.getPosition());
+                break;
             }
         }
 

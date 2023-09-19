@@ -18,8 +18,10 @@ public:
     Button(double x, double y, double size, ButtonFunc onClick);
     Button(double x, double y, double size, sf::Text* text, ButtonFunc onClick);
 
+    ButtonFunc getFunc();
+
     virtual void draw(sf::RenderTexture& drawTexture) = 0;
-    virtual bool isInside(sf::Vector2f mousePosition) = 0;
+    virtual bool isInside(sf::Vector2i mousePosition) = 0;
 };
 
 class CircleButton : public Button {
@@ -28,7 +30,7 @@ public:
     CircleButton(double x, double y, double size, sf::Text* text, ButtonFunc onClick);
 
     void draw(sf::RenderTexture& drawTexture) override;
-    bool isInside(sf::Vector2f mousePosition) override;
+    bool isInside(sf::Vector2i mousePosition) override;
 };
 
 class SquareButton : public Button {
@@ -39,7 +41,7 @@ public:
     SquareButton(double x, double y, double width, double height, sf::Text* text, ButtonFunc onClick);
 
     void draw(sf::RenderTexture& drawTexture) override;
-    bool isInside(sf::Vector2f mousePosition) override;
+    bool isInside(sf::Vector2i mousePosition) override;
 };
 
 #endif
