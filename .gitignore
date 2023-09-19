@@ -89,3 +89,4 @@ patcher
 raycast
 sim
 *.out
+logs.txt
