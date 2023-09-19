@@ -2,8 +2,8 @@
 #define _BUTTON_h_
 
 #include "../constants.h"
-#include "../manager/manager.h"
 
+class Manager;
 typedef void (*ButtonFunc)(Manager& manager, sf::RenderTexture& moleculeTexture);
 
 class Button {

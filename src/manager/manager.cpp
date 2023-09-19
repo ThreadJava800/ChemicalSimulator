@@ -309,18 +309,18 @@ void addSquare(Manager& manager, sf::RenderTexture& moleculeTexture) {
                       rand() % (moleculeTexture.getSize().y - int(DEFAULT_SIZE * 2)));
 }
 
-void pressUp(Manager& manager) {
+void pressUp(Manager& manager, sf::RenderTexture& moleculeTexture) {
     manager.pressUp(PRESS_SHIFT);
 }
 
-void pressDown(Manager& manager) {
+void pressDown(Manager& manager, sf::RenderTexture& moleculeTexture) {
     manager.pressDown(PRESS_SHIFT);
 }
 
-void tempUp(Manager& manager) {
+void tempUp(Manager& manager, sf::RenderTexture& moleculeTexture) {
     manager.tempUp(TEMP_SHIFT);
 }
 
-void tempDown(Manager& manager) {
+void tempDown(Manager& manager, sf::RenderTexture& moleculeTexture) {
     manager.tempDown(TEMP_SHIFT);
 }

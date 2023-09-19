@@ -27,17 +27,17 @@ int main() {
                             rand() % (moleculeTexture.getSize().y - int(DEFAULT_SIZE * 2)));
 
     sf::Text addCrcl = sf::Text(L"+○", font, 40);
-    CircleButton addCrclBtn = CircleButton(20, 20, 30, &addCrcl, addCircle);
+    CircleButton addCrclBtn = CircleButton(20, 20, 60, &addCrcl, addCircle);
     sf::Text addSqua = sf::Text(L"+□", font, 40);
-    CircleButton addSquaBtn = CircleButton(80, 20, 30, &addCrcl, addSquare);
+    CircleButton addSquaBtn = CircleButton(180, 20, 60, &addSqua, addSquare);
     sf::Text prsUp   = sf::Text(L"↑", font, 40);
-    CircleButton prsUpBtn = CircleButton(80, 20, 30, &addCrcl, pressUp);
+    SquareButton prsUpBtn = SquareButton(350, 30, 100, 100, &prsUp, pressUp);
     sf::Text prsDwn   = sf::Text(L"↓", font, 40);
-    CircleButton prsDwnBtn = CircleButton(140, 20, 30, &addCrcl, pressDown);
-    sf::Text tmpUp   = sf::Text(L"↑", font, 40);
-    CircleButton prstmpUpBtn = CircleButton(20, 80, 30, &addCrcl, tempUp);
-    sf::Text tmpDwn   = sf::Text(L"↑", font, 40);
-    CircleButton prstmpDwnBtn = CircleButton(80, 80, 30, &addCrcl, tempDown);
+    SquareButton prsDwnBtn = SquareButton(510, 30, 100, 100, &prsDwn, pressDown);
+    sf::Text tmpUp   = sf::Text(L"+°", font, 40);
+    CircleButton prstmpUpBtn = CircleButton(670, 20, 60, &tmpUp, tempUp);
+    sf::Text tmpDwn   = sf::Text(L"-°", font, 40);
+    CircleButton prstmpDwnBtn = CircleButton(820, 20, 60, &tmpDwn, tempDown);
 
     Button** buttons = new Button*[BUTTON_CNT];
     buttons[0] = &addCrclBtn;
@@ -46,6 +46,8 @@ int main() {
     buttons[3] = &prsDwnBtn;
     buttons[4] = &prstmpUpBtn;
     buttons[5] = &prstmpDwnBtn;
+
+    bossOfGym.setButtons(buttons, BUTTON_CNT);
 
     while (window.isOpen())
     {
