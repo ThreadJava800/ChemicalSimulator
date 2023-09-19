@@ -3,7 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
-const double START_VELOCITY = 0.03;
+const double START_IMPULSE  = 0.0009;
+const double START_VELOCITY = sqrt(START_IMPULSE);
 
 enum MoleculeType {
     ERROR_TYPE,
@@ -24,7 +25,7 @@ protected:
 public:
     explicit BaseMolecule(double x, double y, double size, unsigned int weight, MoleculeType type);
     
-    void move     (sf::RenderTexture& texture, double press);
+    void move     (sf::RenderTexture& texture, double press, double temperature);
     void addWeight(unsigned int weightAdd);
 
     double       getX     ();

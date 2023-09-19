@@ -42,13 +42,15 @@ void BaseMolecule::setSpeed(double velX, double velY) {
     this->velocityY *= velY;
 }
 
-void BaseMolecule::move(sf::RenderTexture& texture, double press) {
+void BaseMolecule::move(sf::RenderTexture& texture, double press, double temperature) {
     ON_ERROR(!this, "Object pointer was null!",);
 
     this->wallCollision(texture, press);
 
-    this->x += velocityX;
-    this->y += velocityY;
+    double coeff = sqrt(3 * temperature / this->weight);
+
+    this->x += velocityX * coeff;
+    this->y += velocityY * coeff;
 }
 
 void BaseMolecule::addWeight(unsigned int weightAdd) {
@@ -207,7 +209,7 @@ void Manager::moveAll(sf::RenderTexture& texture) {
 
     for (long i = 0; i <= this->molecules->size; i++) {
         BaseMolecule* molecule = this->molecules->values[i].value;
-        if (molecule) molecule->move(texture, this->pressY);
+        if (molecule) molecule->move(texture, this->pressY, this->temperature);
     }
 }
 

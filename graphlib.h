@@ -15,9 +15,10 @@ const sf::Color    SQUARE_COL     = sf::Color::Red;
 
 class Manager {
 private:
-    List_t* molecules = nullptr;
-    double  pressY    = 0;
-
+    List_t* molecules   = nullptr;
+    double  pressY      = 0;
+    double  temperature = 273.15;   // kelvins (0 degrees celsium) 
+ 
 public:
     explicit Manager();
     explicit Manager(List_t* molecules, double pressY);
