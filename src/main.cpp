@@ -24,7 +24,7 @@ int main() {
     font.loadFromFile(DEFAULT_FONT);
     sf::Text text = sf::Text("Test", font, 10);
     text.setColor(sf::Color::White);
-    SquareButton addBtn = SquareButton(10, 10, 30, 40, &text, printTest);
+    CircleButton addBtn = CircleButton(10, 10, 30, &text, printTest);
 
     Button** buttons = new Button*[1];
     buttons[0] = &addBtn;

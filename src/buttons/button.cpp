@@ -40,12 +40,14 @@ void CircleButton::draw(sf::RenderTexture& drawTexture) {
     ON_ERROR(!this, "Object pointer was null!",);
 
     sf::CircleShape circle(this->size);
-    circle.setFillColor(sf::Color::Black);
+    circle.setFillColor(sf::Color::Transparent);
+    circle.setOutlineColor(sf::Color::Red);
+    circle.setOutlineThickness(10);
     circle.setPosition(this->x, this->y);
 
     if (this->text) {
         this->text->setOrigin(this->text->getGlobalBounds().getSize() / 2.f + this->text->getLocalBounds().getPosition());
-        this->text->setPosition(circle.getPosition() + sf::Vector2f(circle.getRadius() / 2.f, circle.getRadius() / 2.f));
+        this->text->setPosition(circle.getPosition() + sf::Vector2f(circle.getRadius(), circle.getRadius()));
     }
 
     drawTexture.draw(*this->text);
