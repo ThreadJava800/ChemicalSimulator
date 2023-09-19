@@ -1,13 +1,10 @@
 #include "manager/manager.h"
 
-void printTest() {
-    std::cout << "test\n";
-}
-
 int main() {
     srand((unsigned) time(NULL));
 
-    std::cout << sizeof(sf::Font);
+    sf::Font font;
+    font.loadFromFile(DEFAULT_FONT);
 
     sf::RenderWindow window(sf::VideoMode(), "Chemical simulator", sf::Style::Fullscreen);
     window.setPosition(sf::Vector2i(0, 0));
@@ -15,54 +12,40 @@ int main() {
     sf::RenderTexture moleculeTexture;
     moleculeTexture.create(960, 800);
     moleculeTexture.setSmooth(true);
+    sf::Sprite moleculeSprite(moleculeTexture.getTexture());
+    moleculeSprite.setPosition(0, 0);
 
     sf::RenderTexture buttonTexture;
     buttonTexture.create(960, 160);
     buttonTexture.setSmooth(true);
-
-    sf::Font font;
-    font.loadFromFile(DEFAULT_FONT);
-    sf::Text text = sf::Text("Test", font, 10);
-    text.setColor(sf::Color::White);
-    CircleButton addBtn = CircleButton(10, 10, 30, &text, printTest);
-
-    Button** buttons = new Button*[1];
-    buttons[0] = &addBtn;
-
-    Manager moleculeManager = Manager(buttons, 1);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-    moleculeManager.addMolecule(moleculeTexture, rand() % moleculeTexture.getSize().x, rand() % moleculeTexture.getSize().y);
-
-
-    sf::Sprite moleculeSprite(moleculeTexture.getTexture());
-    moleculeSprite.setPosition(0, 0);
-
     sf::Sprite buttonSprite(buttonTexture.getTexture());
     buttonSprite.setPosition(0, 800);
 
-    // sf::CircleShape shape(5);
-    // shape.setPosition(0, 0);
-    // shape.setFillColor(CIRCLE_COL);
+    Manager bossOfGym = Manager();
+    for (unsigned int i = 0; i < START_MOL_CNT; i++)
+        bossOfGym.addCircle(rand() % (moleculeTexture.getSize().x - int(DEFAULT_SIZE * 2)), 
+                            rand() % (moleculeTexture.getSize().y - int(DEFAULT_SIZE * 2)));
 
-    // moleculeTexture.draw(shape);
+    sf::Text addCrcl = sf::Text(L"+○", font, 40);
+    CircleButton addCrclBtn = CircleButton(20, 20, 30, &addCrcl, addCircle);
+    sf::Text addSqua = sf::Text(L"+□", font, 40);
+    CircleButton addSquaBtn = CircleButton(80, 20, 30, &addCrcl, addSquare);
+    sf::Text prsUp   = sf::Text(L"↑", font, 40);
+    CircleButton prsUpBtn = CircleButton(80, 20, 30, &addCrcl, pressUp);
+    sf::Text prsDwn   = sf::Text(L"↓", font, 40);
+    CircleButton prsDwnBtn = CircleButton(140, 20, 30, &addCrcl, pressDown);
+    sf::Text tmpUp   = sf::Text(L"↑", font, 40);
+    CircleButton prstmpUpBtn = CircleButton(20, 80, 30, &addCrcl, tempUp);
+    sf::Text tmpDwn   = sf::Text(L"↑", font, 40);
+    CircleButton prstmpDwnBtn = CircleButton(80, 80, 30, &addCrcl, tempDown);
+
+    Button** buttons = new Button*[BUTTON_CNT];
+    buttons[0] = &addCrclBtn;
+    buttons[1] = &addSquaBtn;
+    buttons[2] = &prsUpBtn;
+    buttons[3] = &prsDwnBtn;
+    buttons[4] = &prstmpUpBtn;
+    buttons[5] = &prstmpDwnBtn;
 
     while (window.isOpen())
     {
@@ -80,25 +63,25 @@ int main() {
                     window.close();
                 break;
             case sf::Event::MouseButtonPressed:
-                // std::cout << "Test";
                 if (event.mouseButton.button == sf::Mouse::Left) 
-                    // std::cout << "test";
-                    moleculeManager.registerClick(buttonTexture, buttonSprite.getPosition());
+                    bossOfGym.registerClick(moleculeTexture, buttonTexture, buttonSprite.getPosition());
                 break;
             }
         }
 
         moleculeTexture.clear();
         buttonTexture  .clear();
-        window.clear();
+        window         .clear();
 
-        moleculeManager.moveAllObjects(moleculeTexture);
-        moleculeManager.drawAll(moleculeTexture, buttonTexture);
+        bossOfGym.moveAllObjects(moleculeTexture);
+        bossOfGym.drawAll(moleculeTexture, buttonTexture);
+
         moleculeTexture.display();
         buttonTexture  .display();
 
         window.draw(moleculeSprite);
         window.draw(buttonSprite);
+
         window.display();
     }
 

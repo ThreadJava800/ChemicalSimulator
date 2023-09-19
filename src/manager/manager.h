@@ -19,17 +19,31 @@ private:
     void drawButtons  (sf::RenderTexture& buttonTexture);
  
 public:
-    explicit Manager(Button** buttons, unsigned int btnCnt);
+    explicit Manager();
     explicit Manager(List_t* molecules, double pressY, Button** buttons, unsigned int btnCnt);
+
+    void setButtons(Button** buttons, unsigned int btnCnt);
 
     ~Manager();
 
     void drawAll       (sf::RenderTexture& moleculeTexture, sf::RenderTexture& buttonTexture);
-    void registerClick (sf::RenderTexture& buttonTexture, sf::Vector2f spriteStart);
+    void registerClick (sf::RenderTexture& moleculeTexture, sf::RenderTexture& buttonTexture, sf::Vector2f spriteStart);
     void moveAllObjects(sf::RenderTexture& texture);
     void checkCollision(sf::RenderTexture& texture, long ind1, long ind2);
-    void addMolecule   (sf::RenderTexture& texture, double x, double y, double velX = 1, double velY = 1);
+    void addCircle     (double x, double y, double velX = 1, double velY = 1);
+    void addSquare     (double x, double y, double velX = 1, double velY = 1);
+    void pressUp       (double shift);
+    void pressDown     (double shift);
+    void tempUp        (double shift);
+    void tempDown      (double shift);
 };
+
+void addCircle(Manager& manager, sf::RenderTexture& moleculeTexture);
+void addSquare(Manager& manager, sf::RenderTexture& moleculeTexture);
+void pressUp  (Manager& manager, sf::RenderTexture& moleculeTexture);
+void pressDown(Manager& manager, sf::RenderTexture& moleculeTexture);
+void tempUp   (Manager& manager, sf::RenderTexture& moleculeTexture);
+void tempDown (Manager& manager, sf::RenderTexture& moleculeTexture);
 
 List_t* createEmptyList();
 

@@ -11,11 +11,11 @@ double generateRandDouble(double left, double right) {
     return ((rand() % 10) / (double)10) * (right - left) + left;
 }
 
-Manager::Manager(Button** buttons, unsigned int btnCnt) :
+Manager::Manager() :
     molecules(createEmptyList()),
     pressY   (FRAME_WIDTH),
-    buttons  (buttons),
-    btnCnt   (btnCnt) 
+    buttons  (nullptr),
+    btnCnt   (0) 
     {}
 
 Manager::Manager(List_t* molecules, double pressY, Button** buttons, unsigned int btnCnt) :
@@ -38,6 +38,13 @@ Manager::~Manager() {
     listDtor(this->molecules);
     delete this->molecules;
     this->molecules = nullptr;
+}
+
+void Manager::setButtons(Button** buttons, unsigned int btnCnt) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->buttons = buttons;
+    this->btnCnt  = btnCnt;
 }
 
 void Manager::drawMolecules(sf::RenderTexture& moleculeTexture) {
@@ -80,9 +87,17 @@ void Manager::drawButtons(sf::RenderTexture& buttonTexture) {
     ON_ERROR(!this->buttons, "Button array is null!",);
 
     for (unsigned int i = 0; i < this->btnCnt; i++) {
-        // TODO: check on nullptr
-        this->buttons[i]->draw(buttonTexture);
+        Button* btn = this->buttons[i];
+        if (btn) btn->draw(buttonTexture);
     }
+
+    //draw frame
+    sf::RectangleShape frame = sf::RectangleShape(sf::Vector2f(buttonTexture.getSize().x - 2 * FRAME_WIDTH, buttonTexture.getSize().y - 2 * FRAME_WIDTH));
+    frame.setFillColor   (sf::Color::Transparent);
+    frame.setOutlineColor(sf::Color::Red);
+    frame.setOutlineThickness(FRAME_WIDTH);
+    frame.setPosition(FRAME_WIDTH, FRAME_WIDTH);
+    buttonTexture.draw(frame);
 }
 
 void Manager::drawAll(sf::RenderTexture& moleculeTexture, sf::RenderTexture& buttonTexture) {
@@ -92,19 +107,17 @@ void Manager::drawAll(sf::RenderTexture& moleculeTexture, sf::RenderTexture& but
     drawButtons  (buttonTexture);
 }
 
-void Manager::registerClick (sf::RenderTexture& buttonTexture, sf::Vector2f spriteStart) {
+void Manager::registerClick (sf::RenderTexture& moleculeTexture, sf::RenderTexture& buttonTexture, sf::Vector2f spriteStart) {
     ON_ERROR(!this, "Object pointer was null!",);
 
     for (unsigned int i = 0; i < this->btnCnt; i++) {
         Button* btn = this->buttons[i];
         if (btn) {
-            sf::Vector2i mousePositionTexture = sf::Mouse::getPosition() - sf::Vector2i(spriteStart) - sf::Vector2i(0, 2 * FRAME_WIDTH);
-
-            std::cout << mousePositionTexture.x << ' ' <<
-                         mousePositionTexture.y << '\n';
+            sf::Vector2i mousePositionTexture = 
+                sf::Mouse::getPosition() - sf::Vector2i(spriteStart) - sf::Vector2i(0, 2 * FRAME_WIDTH);
 
             if (btn->isInside(mousePositionTexture)) {
-                (btn->getFunc())();
+                (btn->getFunc())(*this, moleculeTexture);
             }
         }
     }
@@ -235,14 +248,14 @@ void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
                     double circleX = createCrlcPointX + diameter * speedX;
                     double circleY = createCrlcPointY + diameter * speedY;
 
-                    addMolecule(texture, circleX, circleY, speedX, speedY);
+                    addCircle(circleX, circleY, speedX, speedY);
                 }
             }
         return;
     }
 }
 
-void Manager::addMolecule(sf::RenderTexture& texture, double x, double y, double velX, double velY) {
+void Manager::addCircle(double x, double y, double velX, double velY) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
 
@@ -250,4 +263,64 @@ void Manager::addMolecule(sf::RenderTexture& texture, double x, double y, double
     molecule->setSpeed(velX, velY);
 
     listPushBack(this->molecules, molecule);
+}
+
+void Manager::addSquare(double x, double y, double velX, double velY) {
+    ON_ERROR(!this, "Object pointer was null!",);
+    ON_ERROR(!(this->molecules), "Pointer to list was null!",);
+
+    SquareMolecule* molecule = new SquareMolecule(x, y, DEFAULT_WEIGHT);
+    molecule->setSpeed(velX, velY);
+
+    listPushBack(this->molecules, molecule);
+}
+
+void Manager::pressUp(double shift) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->pressY -= shift;
+}
+
+void Manager::pressDown(double shift) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->pressY += shift;
+}
+
+void Manager::tempUp(double shift) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->temperature += shift;
+}
+
+void Manager::tempDown(double shift) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->temperature -= shift;
+}
+
+void addCircle(Manager& manager, sf::RenderTexture& moleculeTexture) {
+    manager.addCircle(rand() % (moleculeTexture.getSize().x - int(DEFAULT_SIZE * 2)), 
+                      rand() % (moleculeTexture.getSize().y - int(DEFAULT_SIZE * 2)));
+}
+
+void addSquare(Manager& manager, sf::RenderTexture& moleculeTexture) {
+    manager.addSquare(rand() % (moleculeTexture.getSize().x - int(DEFAULT_SIZE * 2)), 
+                      rand() % (moleculeTexture.getSize().y - int(DEFAULT_SIZE * 2)));
+}
+
+void pressUp(Manager& manager) {
+    manager.pressUp(PRESS_SHIFT);
+}
+
+void pressDown(Manager& manager) {
+    manager.pressDown(PRESS_SHIFT);
+}
+
+void tempUp(Manager& manager) {
+    manager.tempUp(TEMP_SHIFT);
+}
+
+void tempDown(Manager& manager) {
+    manager.tempDown(TEMP_SHIFT);
 }
