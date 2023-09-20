@@ -93,10 +93,9 @@ void SquareButton::draw(sf::RenderTexture& drawTexture) {
     drawTexture.draw(*this->text);
     drawTexture.draw(rect);
 }
+
 bool SquareButton::isInside(sf::Vector2i mousePosition) {
     ON_ERROR(!this, "Object pointer was null!", false);
-
-    std::cout << this->y << ' ' << this->y + this->size << '\n';
 
     return (this->x <= mousePosition.x && mousePosition.x <= this->x + this->size) && 
            (this->y <= mousePosition.y && mousePosition.y <= this->y + this->height);

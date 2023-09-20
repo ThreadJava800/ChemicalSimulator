@@ -16,7 +16,7 @@ int main() {
     moleculeSprite.setPosition(0, 0);
 
     sf::RenderTexture buttonTexture;
-    buttonTexture.create(960, 160);
+    buttonTexture.create(960, 240);
     buttonTexture.setSmooth(true);
     sf::Sprite buttonSprite(buttonTexture.getTexture());
     buttonSprite.setPosition(0, 800);

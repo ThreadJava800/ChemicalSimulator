@@ -1,5 +1,181 @@
 #include "manager.h"
 
+BaseManager::BaseManager() :
+    texture(nullptr),
+    sprite (nullptr)
+    {}
+
+BaseManager::BaseManager(sf::RenderTexture* _texture, sf::Sprite* _sprite) :
+    texture(_texture),
+    sprite (_sprite)
+    {}
+
+BaseManager::~BaseManager() {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->sprite  = nullptr;
+    this->texture = nullptr;
+}
+
+UIManager::UIManager() :
+    BaseManager(),
+    buttons    (nullptr),
+    btnCnt     (0)
+    {}
+
+UIManager::UIManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, Button** buttons, unsigned int btnCnt) :
+    BaseManager(_texture, _sprite),
+    buttons    (buttons),
+    btnCnt     (btnCnt)
+    {}
+
+UIManager::~UIManager() {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->buttons = nullptr;
+    this->btnCnt  = 0;
+}
+
+void UIManager::draw() {
+    ON_ERROR(!this, "Object pointer was null!",);
+    ON_ERROR(!this->buttons, "Button array is null!",);
+    ON_ERROR(!this->texture || !this->sprite, "Drawable area was null",);
+
+    this->texture->clear();
+
+    for (unsigned int i = 0; i < this->btnCnt; i++) {
+        Button* btn = this->buttons[i];
+        if (btn) btn->draw(*(this->texture));
+    }
+
+    //draw frame
+    sf::RectangleShape frame = sf::RectangleShape(sf::Vector2f(this->texture->getSize().x - 2 * FRAME_WIDTH, this->texture->getSize().y - 2 * FRAME_WIDTH));
+    frame.setFillColor   (sf::Color::Transparent);
+    frame.setOutlineColor(sf::Color::Red);
+    frame.setOutlineThickness(FRAME_WIDTH);
+    frame.setPosition(FRAME_WIDTH, FRAME_WIDTH);
+    this->texture->draw(frame);
+
+    this->texture->display();
+}
+
+MolManager::MolManager() :
+    BaseManager(),
+    molecules  (nullptr),
+    pressY     (0)
+    {}
+
+MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List_t* _molecules, double _pressY) :
+    BaseManager(_texture, _sprite),
+    molecules  (_molecules),
+    pressY     (_pressY)
+    {}
+
+MolManager::~MolManager() {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->molecules = nullptr;
+    this->pressY    = 0;
+}
+
+void MolManager::draw() {
+    ON_ERROR(!this, "Object pointer was null!",);
+    ON_ERROR(!(this->molecules), "Pointer to list was null!",);
+    ON_ERROR(!this->texture || !this->sprite, "Drawable area was null",);
+
+    texture->clear();
+
+    // draw frame
+    sf::RectangleShape frame = sf::RectangleShape(sf::Vector2f(texture->getSize().x - 2 * FRAME_WIDTH, texture->getSize().y - 2 * FRAME_WIDTH));
+    frame.setFillColor   (sf::Color::Transparent);
+    frame.setOutlineColor(sf::Color::White);
+    frame.setOutlineThickness(FRAME_WIDTH);
+    frame.setPosition(FRAME_WIDTH, FRAME_WIDTH);
+    texture->draw(frame);
+
+    // draw press
+    sf::RectangleShape press = sf::RectangleShape(sf::Vector2f(texture->getSize().x - 2 * FRAME_WIDTH, FRAME_WIDTH));
+    press.setFillColor   (sf::Color::Transparent);
+    press.setOutlineColor(sf::Color::Red);
+    press.setOutlineThickness(FRAME_WIDTH);
+    press.setPosition(FRAME_WIDTH, this->pressY);
+    texture->draw(press);
+
+    texture->display();
+
+    long moleculeCount = this->molecules->size;
+
+    for (long i = 0; i <= moleculeCount; i++) {
+        for (long j = i + 1; j <= moleculeCount; j++) {
+            checkCollision(moleculeTexture, i, j);
+        }
+    }
+
+    // draw molecules
+    for (long i = 0; i <= this->molecules->size; i++) {
+        BaseMolecule* molecule = this->molecules->values[i].value;
+        if (molecule) molecule->draw(*texture);
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*****************************************************************************/
 List_t* createEmptyList() {
     List_t* list = new List_t;
     _listCtor(list, 2, true);
@@ -275,13 +451,15 @@ void Manager::addSquare(double x, double y, double velX, double velY) {
     listPushBack(this->molecules, molecule);
 }
 
-void Manager::pressUp(double shift) {
+void Manager::pressUp(double shift, sf::RenderTexture& moleculeTexture) {
     ON_ERROR(!this, "Object pointer was null!",);
+
+    this->temperature = (moleculeTexture.getSize().y - this->pressY) * moleculeTexture.getSize().y / 273.15;
 
     this->pressY -= shift;
 }
 
-void Manager::pressDown(double shift) {
+void Manager::pressDown(double shift, sf::RenderTexture& moleculeTexture) {
     ON_ERROR(!this, "Object pointer was null!",);
 
     this->pressY += shift;
@@ -310,11 +488,11 @@ void addSquare(Manager& manager, sf::RenderTexture& moleculeTexture) {
 }
 
 void pressUp(Manager& manager, sf::RenderTexture& moleculeTexture) {
-    manager.pressUp(PRESS_SHIFT);
+    manager.pressUp(PRESS_SHIFT, moleculeTexture);
 }
 
 void pressDown(Manager& manager, sf::RenderTexture& moleculeTexture) {
-    manager.pressDown(PRESS_SHIFT);
+    manager.pressDown(PRESS_SHIFT, moleculeTexture);
 }
 
 void tempUp(Manager& manager, sf::RenderTexture& moleculeTexture) {

@@ -6,6 +6,65 @@
 #include "../../LinkedList/list.h"
 #include "../buttons/button.h"
 
+class BaseManager {
+protected:
+    sf::RenderTexture* texture = nullptr;
+    sf::Sprite*        sprite  = nullptr;
+
+public:
+    BaseManager();
+    BaseManager(sf::RenderTexture* _texture, sf::Sprite* _sprite);
+
+    ~BaseManager();
+
+    virtual void draw() = 0;
+};
+
+class UIManager : BaseManager {
+private:
+    Button**     buttons = nullptr;
+    unsigned int btnCnt  = 0;
+
+public:
+    UIManager();
+    UIManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, Button** buttons, unsigned int btnCnt);
+
+    ~UIManager();
+
+    void draw() override;
+
+};
+
+class MolManager : BaseManager {
+private:
+    List_t* molecules   = nullptr;
+    double  pressY      = 0;
+    double  temperature = 273.15;   // kelvins (0 degrees celsium)
+
+public:
+    MolManager();
+    MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List_t* _molecules, double _pressY);
+
+    ~MolManager();
+
+    void draw() override;
+};
+
+class Controller {
+private:
+    UIManager*  btnManager = nullptr;
+    MolManager* molManager = nullptr;
+
+public:
+    Controller();
+    Controller(UIManager* _btnManager, MolManager* _molManager);
+
+    ~Controller();
+
+    void registerClick();
+    void update();
+};
+
 class Manager {
 private:
     List_t* molecules   = nullptr;
@@ -32,8 +91,8 @@ public:
     void checkCollision(sf::RenderTexture& texture, long ind1, long ind2);
     void addCircle     (double x, double y, double velX = 1, double velY = 1);
     void addSquare     (double x, double y, double velX = 1, double velY = 1);
-    void pressUp       (double shift);
-    void pressDown     (double shift);
+    void pressUp       (double shift, sf::RenderTexture& moleculeTexture);
+    void pressDown     (double shift, sf::RenderTexture& moleculeTexture);
     void tempUp        (double shift);
     void tempDown      (double shift);
 };

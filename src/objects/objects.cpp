@@ -38,6 +38,8 @@ double BaseMolecule::getWeight() {
 void BaseMolecule::setSpeed(double velX, double velY) {
     ON_ERROR(!this, "Object pointer was null!",);
 
+    if (velY == 0) return;
+
     this->velocityX *= velX;
     this->velocityY *= velY;
 }
@@ -96,6 +98,7 @@ void CircleMolecule::wallCollision(sf::RenderTexture& texture, double press) {
 }
 
 SquareMolecule::SquareMolecule() : BaseMolecule(0, 0, 0, 0, SQUARE) {}
+
 SquareMolecule::SquareMolecule(double x, double y, unsigned int weight) :
                 BaseMolecule  (x, y, 2 * DEFAULT_SIZE, weight, SQUARE)  {}
 
