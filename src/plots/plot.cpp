@@ -1,21 +1,31 @@
 #include "plot.h"
 
 CoordinatePlane::CoordinatePlane(double xOrigin, double yOrigin, double xUnit, double yUnit,
-                                 double xStart,  double yStart,  double width, double height) :
-    xOrigin(xOrigin),
-    yOrigin(yOrigin),
-    xUnit  (xUnit),
-    yUnit  (yUnit),
-    xStart (xStart),
-    yStart (yStart),
-    width  (width),
-    height (height)  {}
+                                 double xStart,  double yStart,  double width, double height,
+                                 sf::Text*  yName  , sf::Text* yUnitTxt) :
+    xOrigin (xOrigin),
+    yOrigin (yOrigin),
+    xUnit   (xUnit),
+    yUnit   (yUnit),
+    xStart  (xStart),
+    yStart  (yStart),
+    width   (width),
+    height  (height),
+    yName   (yName),
+    yUnitTxt(yUnitTxt)  
+    {}
 
 CoordinatePlane::~CoordinatePlane() {
-    this->xOrigin = NAN;
-    this->yOrigin = NAN;
-    this->xUnit   = NAN;
-    this->yUnit   = NAN;
+    this->xOrigin  = NAN;
+    this->yOrigin  = NAN;
+    this->xUnit    = NAN;
+    this->yUnit    = NAN;
+    this->xStart   = NAN;
+    this->yStart   = NAN;
+    this->width    = NAN;
+    this->height   = NAN;
+    this->yName    = nullptr;
+    this->yUnitTxt = nullptr;
 }
 
 double CoordinatePlane::getXOrigin() {
@@ -48,6 +58,9 @@ double CoordinatePlane::getYStart() {
 }
 
 void CoordinatePlane::drawPoints(sf::RenderTexture& texture, const sf::Vector2f coordStart) {
+    this->yUnitTxt->setPosition(xOrigin + 5, yStart + yOrigin - yUnit);
+    texture.draw(*this->yUnitTxt);
+
     // unit points on x axis
     for (int i = xOrigin; i >= xStart; i -= xUnit) {
         sf::RectangleShape point(sf::Vector2f(UNIT_POINT_RAD, UNIT_POINT_RAD));
@@ -105,6 +118,10 @@ void CoordinatePlane::draw(sf::RenderTexture& texture, const sf::Vector2f coordS
 
     ox.draw(texture, *this, oxStart.x, oxStart.y);
     oy.draw(texture, *this, oyStart.x, oyStart.y);
+
+    sf::Vector2f namePos = sf::Vector2f(this->xOrigin, yStart);
+    this->yName->setPosition(namePos + sf::Vector2f(2, 15));
+    texture.draw(*this->yName);
 
     drawPoints(texture, coordStart);
     drawFrame (texture);

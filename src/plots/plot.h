@@ -10,12 +10,16 @@ private:
     double xStart , yStart;
     double width  , height;
 
+    sf::Text*  yName;
+    sf::Text*  yUnitTxt;
+
     void drawPoints(sf::RenderTexture& texture, const sf::Vector2f coordStart);
     void drawFrame (sf::RenderTexture& texture);
 
 public:
     CoordinatePlane(double xOrigin, double yOrigin, double xUnit, double yUnit,
-                    double xStart,  double yStart,  double width, double height);
+                    double xStart,  double yStart,  double width, double height,
+                    sf::Text*  yName  , sf::Text* yUnitTxt);
     ~CoordinatePlane();
 
     double getXOrigin();
