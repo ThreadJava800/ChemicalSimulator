@@ -87,17 +87,13 @@ MolManager::MolManager() :
     BaseManager  (),
     molecules    (nullptr),
     pressY       (0),
-    temperature  (273.15),
-    collisionCnt (0),
-    collisionTime(0)
+    temperature  (273.15)
     {}
 
 MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, double _pressY, double _temperature) : 
     BaseManager  (_texture, _sprite),
     pressY       (_pressY),
-    temperature  (_temperature),
-    collisionCnt (0),
-    collisionTime(0)
+    temperature  (_temperature)
 {
     ON_ERROR(!this, "Object pointer was null!",);
 
@@ -109,9 +105,7 @@ MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List_t*
     BaseManager  (_texture, _sprite),
     molecules    (_molecules),
     pressY       (_pressY),
-    temperature  (_temperature),
-    collisionCnt (0),
-    collisionTime(0)
+    temperature  (_temperature)
     {}
 
 MolManager::~MolManager() {
@@ -129,8 +123,6 @@ MolManager::~MolManager() {
 
     this->molecules     = nullptr;
     this->pressY        = 0;
-    this->collisionCnt  = 0;
-    this->collisionTime = 0;
 }
 
 double MolManager::getTemperature() {
@@ -226,8 +218,6 @@ void MolManager::checkCollisions() {
 
     long moleculeCount = this->molecules->size;
 
-    this->collisionTime++;
-
     for (long i = 0; i <= moleculeCount; i++) {
         for (long j = i + 1; j <= moleculeCount; j++) {
             tryCollide(i, j);
@@ -258,8 +248,6 @@ void MolManager::tryCollide(long ind1, long ind2) {
 
             delete molecule1;
             delete molecule2;
-
-            this->collisionCnt++;
         }
         return;
     }
@@ -269,8 +257,6 @@ void MolManager::tryCollide(long ind1, long ind2) {
                 listPointer->values[ind2].value->addWeight(molecule1->getWeight());
 
                 delete molecule1;
-
-                this->collisionCnt++;
             }
         return;
     }
@@ -280,8 +266,6 @@ void MolManager::tryCollide(long ind1, long ind2) {
                 listPointer->values[ind1].value->addWeight(molecule2->getWeight());
 
                 delete molecule2;
-
-                this->collisionCnt++;
             }
         return;
     }
@@ -308,8 +292,6 @@ void MolManager::tryCollide(long ind1, long ind2) {
 
                     addMolecule(CIRCLE, circleX, circleY, speedX, speedY);
                 }
-
-                this->collisionCnt++;
             }
         return;
     }
@@ -354,9 +336,6 @@ void MolManager::movePress(MOVE_DIR dir, double shift) {
     }
 
     this->pressY += shift;
-
-    this->collisionCnt  = 0;
-    this->collisionTime = 0;
 }
 
 void MolManager::changeTemp(MOVE_DIR dir, double shift) {

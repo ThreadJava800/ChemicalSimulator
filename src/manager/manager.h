@@ -52,8 +52,6 @@ private:
     List_t* molecules     = nullptr;
     double  pressY        = 0;
     double  temperature   = 273.15;   // kelvins (0 degrees celsium)
-    uint    collisionCnt  = 0;
-    uint    collisionTime = 0;
 
 public:
     MolManager();
