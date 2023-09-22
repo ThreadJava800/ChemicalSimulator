@@ -93,6 +93,11 @@ public:
 
     ~PlotManager();
 
+    Plot* getTempPlot();
+    Plot* getCirclePlot();
+    Plot* getSquarePlot();
+    Plot* getPressPlot();
+
     void draw() override;
 
     void addPoints(sf::Vector2f tempPoint, 

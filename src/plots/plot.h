@@ -5,20 +5,25 @@
 
 class CoordinatePlane {
 private:
-    double    xOrigin, yOrigin;
-    double    xUnit  , yUnit;
+    double xOrigin, yOrigin;
+    double xUnit  , yUnit;
+    double xStart , yStart;
+    double width  , height;
 
     void drawPoints(sf::RenderTexture& texture, const sf::Vector2f coordStart);
     void drawFrame (sf::RenderTexture& texture);
 
 public:
-    CoordinatePlane(double xOrigin, double yOrigin, double xUnit, double yUnit);
+    CoordinatePlane(double xOrigin, double yOrigin, double xUnit, double yUnit,
+                    double xStart,  double yStart,  double width, double height);
     ~CoordinatePlane();
 
     double getXOrigin();
     double getYOrigin();
     double getXUnit  ();
     double getYUnit  ();
+    double getXStart ();
+    double getYStart ();
 
     void draw(sf::RenderTexture& texture, const sf::Vector2f coordStart);
 };
@@ -71,6 +76,8 @@ public:
     Plot(CoordinatePlane* plane, unsigned int capacity);
 
     ~Plot();
+
+    CoordinatePlane* getPlane();
 
     void draw(sf::RenderTexture& texture, const sf::Vector2f coordStart);
     void addPoint(sf::Vector2f& point);

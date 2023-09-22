@@ -386,6 +386,30 @@ PlotManager::~PlotManager() {
     this->pressPlot  = nullptr;
 }
 
+Plot* PlotManager::getTempPlot() {
+    ON_ERROR(!this, "Object pointer was null!", nullptr);
+
+    return this->tempPlot;
+}
+
+Plot* PlotManager::getCirclePlot() {
+    ON_ERROR(!this, "Object pointer was null!", nullptr);
+
+    return this->circlePlot;
+}
+
+Plot* PlotManager::getSquarePlot() {
+    ON_ERROR(!this, "Object pointer was null!", nullptr);
+
+    return this->squarePlot;
+}
+
+Plot* PlotManager::getPressPlot() {
+    ON_ERROR(!this, "Object pointer was null!", nullptr);
+
+    return this->pressPlot;
+}
+
 void PlotManager::draw() {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!this->texture || !this->sprite, "Drawable area was null!",);
@@ -403,10 +427,34 @@ void PlotManager::draw() {
 void PlotManager::addPoints(sf::Vector2f tempPoint, sf::Vector2f circlePoint, sf::Vector2f squarePoint, sf::Vector2f pressPoint) {
     ON_ERROR(!this, "Object pointer was null!",);
 
-    if (tempPlot)   tempPlot  ->addPoint(tempPoint);
-    if (circlePlot) circlePlot->addPoint(circlePoint);
-    if (squarePlot) squarePlot->addPoint(squarePoint);
-    if (pressPlot)  pressPlot ->addPoint(pressPoint);
+    if (tempPlot)   {
+        CoordinatePlane* plane = this->tempPlot->getPlane();
+        if (plane) {
+            sf::Vector2f startPoint = sf::Vector2f(plane->getXStart(), plane->getYStart()) + tempPoint;
+            tempPlot->addPoint(startPoint);
+        }
+    }
+    if (circlePlot) {
+        CoordinatePlane* plane = this->circlePlot->getPlane();
+        if (plane) {
+            sf::Vector2f startPoint = sf::Vector2f(plane->getXStart(), plane->getYStart()) + circlePoint;
+            circlePlot->addPoint(startPoint);
+        }
+    }
+    if (squarePlot) {
+        CoordinatePlane* plane = this->squarePlot->getPlane();
+        if (plane) {
+            sf::Vector2f startPoint = sf::Vector2f(plane->getXStart(), plane->getYStart()) + squarePoint;
+            squarePlot->addPoint(startPoint);
+        }
+    }
+    if (pressPlot)  {
+        CoordinatePlane* plane = this->pressPlot->getPlane();
+        if (plane) {
+            sf::Vector2f startPoint = sf::Vector2f(plane->getXStart(), plane->getYStart()) + pressPoint;
+            pressPlot->addPoint(startPoint);
+        }
+    }
 }
 
 Controller::Controller() :
@@ -486,10 +534,10 @@ void Controller::updatePlot(size_t frameNum) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!this->molManager || !this->pltManager, "Manager pointer was null!",);
 
-    sf::Vector2f tempPoint    (frameNum, this->molManager->getTemperature());
-    sf::Vector2f circlePoint  (frameNum, this->molManager->getMolTypeCount(CIRCLE));
-    sf::Vector2f squarePoint  (frameNum, this->molManager->getMolTypeCount(SQUARE));
-    sf::Vector2f pressurePoint(frameNum, this->molManager->getPressure());
+    sf::Vector2f tempPoint    (frameNum, pltManager->getTempPlot()  ->getPlane()->getYOrigin() - molManager->getTemperature());
+    sf::Vector2f circlePoint  (frameNum, pltManager->getCirclePlot()->getPlane()->getYOrigin() - molManager->getMolTypeCount(CIRCLE));
+    sf::Vector2f squarePoint  (frameNum, pltManager->getSquarePlot()->getPlane()->getYOrigin() - molManager->getMolTypeCount(SQUARE));
+    sf::Vector2f pressurePoint(frameNum, pltManager->getPressPlot() ->getPlane()->getYOrigin() - molManager->getPressure());
 
     pltManager->addPoints(tempPoint, circlePoint, squarePoint, pressurePoint);
     pltManager->draw();
