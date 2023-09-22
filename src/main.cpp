@@ -67,7 +67,7 @@ int main() {
                     window.close();
                 break;
             case sf::Event::MouseButtonPressed:
-                if (event.mouseButton.button == sf::Mouse::Left) 
+                if (event.mouseButton.button == sf::Mouse::Left)
                     bossOfGym.registerClick();
                 break;
             }

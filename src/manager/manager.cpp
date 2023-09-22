@@ -376,7 +376,6 @@ void Controller::update() {
 
     molManager->checkCollisions();
     molManager->moveAll        ();
-    this      ->registerClick  ();
 
     molManager->draw();
     btnManager->draw();
