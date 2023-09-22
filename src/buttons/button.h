@@ -3,8 +3,8 @@
 
 #include "../constants.h"
 
-class Manager;
-typedef void (*ButtonFunc)(Manager& manager, sf::RenderTexture& moleculeTexture);
+class Controller;
+typedef void (*ButtonFunc)(Controller& manager);
 
 class Button {
 protected:

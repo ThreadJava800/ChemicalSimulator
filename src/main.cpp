@@ -21,11 +21,6 @@ int main() {
     sf::Sprite buttonSprite(buttonTexture.getTexture());
     buttonSprite.setPosition(0, 800);
 
-    Manager bossOfGym = Manager();
-    for (unsigned int i = 0; i < START_MOL_CNT; i++)
-        bossOfGym.addCircle(rand() % (moleculeTexture.getSize().x - int(DEFAULT_SIZE * 2)), 
-                            rand() % (moleculeTexture.getSize().y - int(DEFAULT_SIZE * 2)));
-
     sf::Text addCrcl = sf::Text(L"+○", font, 40);
     CircleButton addCrclBtn = CircleButton(20, 20, 60, &addCrcl, addCircle);
     sf::Text addSqua = sf::Text(L"+□", font, 40);
@@ -47,7 +42,14 @@ int main() {
     buttons[4] = &prstmpUpBtn;
     buttons[5] = &prstmpDwnBtn;
 
-    bossOfGym.setButtons(buttons, BUTTON_CNT);
+    UIManager  btnManager = UIManager (&buttonTexture, &buttonSprite, buttons, BUTTON_CNT);
+    MolManager molManager = MolManager(&moleculeTexture, &moleculeSprite, 0, 273.15);
+    Controller bossOfGym  = Controller(&btnManager, &molManager);
+
+    for (unsigned int i = 0; i < START_MOL_CNT; i++)
+        bossOfGym.getMolManager()->addMolecule(CIRCLE,
+                            rand() % (moleculeTexture.getSize().x - int(DEFAULT_SIZE * 2)), 
+                            rand() % (moleculeTexture.getSize().y - int(DEFAULT_SIZE * 2)));
 
     while (window.isOpen())
     {
@@ -66,20 +68,17 @@ int main() {
                 break;
             case sf::Event::MouseButtonPressed:
                 if (event.mouseButton.button == sf::Mouse::Left) 
-                    bossOfGym.registerClick(moleculeTexture, buttonTexture, buttonSprite.getPosition());
+                    bossOfGym.registerClick();
                 break;
             }
         }
 
-        moleculeTexture.clear();
-        buttonTexture  .clear();
+        // moleculeTexture.clear();
+        // buttonTexture  .clear();
         window         .clear();
 
-        bossOfGym.moveAllObjects(moleculeTexture);
-        bossOfGym.drawAll(moleculeTexture, buttonTexture);
 
-        moleculeTexture.display();
-        buttonTexture  .display();
+        bossOfGym.update();
 
         window.draw(moleculeSprite);
         window.draw(buttonSprite);
@@ -88,7 +87,6 @@ int main() {
     }
 
     delete[] buttons;
-    
 
     return 0;
 }

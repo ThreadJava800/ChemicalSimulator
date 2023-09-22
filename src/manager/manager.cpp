@@ -17,6 +17,18 @@ BaseManager::~BaseManager() {
     this->texture = nullptr;
 }
 
+sf::RenderTexture* BaseManager::getTexture() {
+    ON_ERROR(!this, "Object pointer was null!", nullptr);
+
+    return this->texture;
+}
+
+sf::Sprite* BaseManager::getSprite () {
+    ON_ERROR(!this, "Object pointer was null!", nullptr);
+
+    return this->sprite;
+}
+
 UIManager::UIManager() :
     BaseManager(),
     buttons    (nullptr),
@@ -34,6 +46,18 @@ UIManager::~UIManager() {
 
     this->buttons = nullptr;
     this->btnCnt  = 0;
+}
+
+Button** UIManager::getButtons() {
+    ON_ERROR(!this, "Object pointer was null!", nullptr);
+
+    return this->buttons;
+}
+
+unsigned int UIManager::getBtnCnt() {
+    ON_ERROR(!this, "Object pointer was null!", 0);
+
+    return this->btnCnt;
 }
 
 void UIManager::draw() {
@@ -62,17 +86,40 @@ void UIManager::draw() {
 MolManager::MolManager() :
     BaseManager(),
     molecules  (nullptr),
-    pressY     (0)
+    pressY     (0),
+    temperature(273.15)
     {}
 
-MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List_t* _molecules, double _pressY) :
+MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, double _pressY, double _temperature) : 
+    BaseManager(_texture, _sprite),
+    pressY     (_pressY),
+    temperature(_temperature) 
+{
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->molecules = new List_t;
+    listCtor(this->molecules, 1, 1);
+}
+
+MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List_t* _molecules, double _pressY, double _temperature) :
     BaseManager(_texture, _sprite),
     molecules  (_molecules),
-    pressY     (_pressY)
+    pressY     (_pressY),
+    temperature(_temperature)
     {}
 
 MolManager::~MolManager() {
     ON_ERROR(!this, "Object pointer was null!",);
+
+    if (!(this->molecules)) return;
+
+    for (long i = 0; i <= this->molecules->size; i++) {
+        BaseMolecule* value = this->molecules->values[i].value;
+        if (value) delete value;
+    }
+
+    listDtor(this->molecules);
+    delete this->molecules;
 
     this->molecules = nullptr;
     this->pressY    = 0;
@@ -105,12 +152,6 @@ void MolManager::draw() {
 
     long moleculeCount = this->molecules->size;
 
-    for (long i = 0; i <= moleculeCount; i++) {
-        for (long j = i + 1; j <= moleculeCount; j++) {
-            checkCollision(moleculeTexture, i, j);
-        }
-    }
-
     // draw molecules
     for (long i = 0; i <= this->molecules->size; i++) {
         BaseMolecule* molecule = this->molecules->values[i].value;
@@ -119,247 +160,20 @@ void MolManager::draw() {
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*****************************************************************************/
-List_t* createEmptyList() {
-    List_t* list = new List_t;
-    _listCtor(list, 2, true);
-
-    return list;
-}
-
-double generateRandDouble(double left, double right) {
-    return ((rand() % 10) / (double)10) * (right - left) + left;
-}
-
-Manager::Manager() :
-    molecules(createEmptyList()),
-    pressY   (FRAME_WIDTH),
-    buttons  (nullptr),
-    btnCnt   (0) 
-    {}
-
-Manager::Manager(List_t* molecules, double pressY, Button** buttons, unsigned int btnCnt) :
-    molecules(molecules),
-    pressY   (pressY + FRAME_WIDTH),
-    buttons  (buttons),
-    btnCnt   (btnCnt)
-    {}
-
-Manager::~Manager() {
-    ON_ERROR(!this, "Object pointer was null!",);
-
-    if (!(this->molecules)) return;
-
-    for (long i = 0; i <= this->molecules->size; i++) {
-        BaseMolecule* value = this->molecules->values[i].value;
-        if (value) delete value;
-    }
-
-    listDtor(this->molecules);
-    delete this->molecules;
-    this->molecules = nullptr;
-}
-
-void Manager::setButtons(Button** buttons, unsigned int btnCnt) {
-    ON_ERROR(!this, "Object pointer was null!",);
-
-    this->buttons = buttons;
-    this->btnCnt  = btnCnt;
-}
-
-void Manager::drawMolecules(sf::RenderTexture& moleculeTexture) {
+void MolManager::checkCollisions() {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
-
-    // draw frame
-    sf::RectangleShape frame = sf::RectangleShape(sf::Vector2f(moleculeTexture.getSize().x - 2 * FRAME_WIDTH, moleculeTexture.getSize().y - 2 * FRAME_WIDTH));
-    frame.setFillColor   (sf::Color::Transparent);
-    frame.setOutlineColor(sf::Color::White);
-    frame.setOutlineThickness(FRAME_WIDTH);
-    frame.setPosition(FRAME_WIDTH, FRAME_WIDTH);
-    moleculeTexture.draw(frame);
-
-    // draw press
-    sf::RectangleShape press = sf::RectangleShape(sf::Vector2f(moleculeTexture.getSize().x - 2 * FRAME_WIDTH, FRAME_WIDTH));
-    press.setFillColor   (sf::Color::Transparent);
-    press.setOutlineColor(sf::Color::Red);
-    press.setOutlineThickness(FRAME_WIDTH);
-    press.setPosition(FRAME_WIDTH, this->pressY);
-    moleculeTexture.draw(press);
 
     long moleculeCount = this->molecules->size;
 
     for (long i = 0; i <= moleculeCount; i++) {
         for (long j = i + 1; j <= moleculeCount; j++) {
-            checkCollision(moleculeTexture, i, j);
-        }
-    }
-
-    // draw molecules
-    for (long i = 0; i <= this->molecules->size; i++) {
-        BaseMolecule* molecule = this->molecules->values[i].value;
-        if (molecule) molecule->draw(moleculeTexture);
-    }
-}
-
-void Manager::drawButtons(sf::RenderTexture& buttonTexture) {
-    ON_ERROR(!this, "Object pointer was null!",);
-    ON_ERROR(!this->buttons, "Button array is null!",);
-
-    for (unsigned int i = 0; i < this->btnCnt; i++) {
-        Button* btn = this->buttons[i];
-        if (btn) btn->draw(buttonTexture);
-    }
-
-    //draw frame
-    sf::RectangleShape frame = sf::RectangleShape(sf::Vector2f(buttonTexture.getSize().x - 2 * FRAME_WIDTH, buttonTexture.getSize().y - 2 * FRAME_WIDTH));
-    frame.setFillColor   (sf::Color::Transparent);
-    frame.setOutlineColor(sf::Color::Red);
-    frame.setOutlineThickness(FRAME_WIDTH);
-    frame.setPosition(FRAME_WIDTH, FRAME_WIDTH);
-    buttonTexture.draw(frame);
-}
-
-void Manager::drawAll(sf::RenderTexture& moleculeTexture, sf::RenderTexture& buttonTexture) {
-    ON_ERROR(!this, "Object pointer was null!",);
-
-    drawMolecules(moleculeTexture);
-    drawButtons  (buttonTexture);
-}
-
-void Manager::registerClick (sf::RenderTexture& moleculeTexture, sf::RenderTexture& buttonTexture, sf::Vector2f spriteStart) {
-    ON_ERROR(!this, "Object pointer was null!",);
-
-    for (unsigned int i = 0; i < this->btnCnt; i++) {
-        Button* btn = this->buttons[i];
-        if (btn) {
-            sf::Vector2i mousePositionTexture = 
-                sf::Mouse::getPosition() - sf::Vector2i(spriteStart) - sf::Vector2i(0, 2 * FRAME_WIDTH);
-
-            if (btn->isInside(mousePositionTexture)) {
-                (btn->getFunc())(*this, moleculeTexture);
-            }
+            tryCollide(i, j);
         }
     }
 }
 
-void Manager::moveAllObjects(sf::RenderTexture& texture) {
-    ON_ERROR(!this, "Object pointer was null!",);
-    ON_ERROR(!(this->molecules), "Pointer to list was null!",);
-
-    for (long i = 0; i <= this->molecules->size; i++) {
-        BaseMolecule* molecule = this->molecules->values[i].value;
-        if (molecule) molecule->move(texture, this->pressY, this->temperature);
-    }
-}
-
-bool collideCircles(BaseMolecule* mol1, BaseMolecule* mol2) {
-    ON_ERROR(!mol1 || !mol2, "Object pointer was null!", false);
-
-    double centre1x = mol1->getX() + mol1->getSize();
-    double centre1y = mol1->getY() + mol1->getSize();
-    double centre2x = mol2->getX() + mol2->getSize();
-    double centre2y = mol2->getY() + mol2->getSize();
-
-    double radSum = mol1->getSize() + mol2->getSize();
-
-    return (centre1x - centre2x) * (centre1x - centre2x) 
-         + (centre1y - centre2y) * (centre1y - centre2y) <= radSum * radSum;
-}
-
-bool collideSquareCircle(BaseMolecule* square, BaseMolecule* circle) {
-    ON_ERROR(!square || !circle, "Object pointer was null!", false);
-
-    double rectCentreX = square->getX() + square->getSize() / 2;
-    double rectCentreY = square->getY() + square->getSize() / 2;
-    double circCentreX = circle->getX() + circle->getSize();
-    double circCentreY = circle->getY() + circle->getSize();
-
-    double distanceX = abs(rectCentreX - circCentreX);
-    double distanceY = abs(rectCentreY - circCentreY);
-
-    if ((distanceX > square->getSize() / 2 + circle->getSize()) ||
-        (distanceY > square->getSize() / 2 + circle->getSize())) return false;
-
-    if ((distanceX <= square->getSize() / 2) ||
-        (distanceY <= square->getSize() / 2)) return true;
-
-    double distToCorner = 
-        2 * (circCentreX - square->getSize() / 2) * (circCentreX - square->getSize() / 2); 
-
-    return distToCorner <= circle->getSize() * circle->getSize();
-        
-}
-
-bool collideSquares(BaseMolecule* mol1, BaseMolecule* mol2) {
-    ON_ERROR(!mol1 || !mol2, "Object pointer was null!", false);
-
-    double mol1CentreX = mol1->getX() + mol1->getSize();
-    double mol1CentreY = mol1->getY() + mol1->getSize();
-    double mol2CentreX = mol2->getX() + mol2->getSize();
-    double mol2CentreY = mol2->getY() + mol2->getSize();
-
-    return (abs(mol1CentreX - mol2CentreX) < mol1->getSize() / 2 + mol2->getSize() / 2) &&
-           (abs(mol1CentreY - mol2CentreY) < mol1->getSize() / 2 + mol2->getSize() / 2);
-}
-
-void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
+void MolManager::tryCollide(long ind1, long ind2) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
 
@@ -424,81 +238,250 @@ void Manager::checkCollision(sf::RenderTexture& texture, long ind1, long ind2) {
                     double circleX = createCrlcPointX + diameter * speedX;
                     double circleY = createCrlcPointY + diameter * speedY;
 
-                    addCircle(circleX, circleY, speedX, speedY);
+                    addMolecule(CIRCLE, circleX, circleY, speedX, speedY);
                 }
             }
         return;
     }
 }
 
-void Manager::addCircle(double x, double y, double velX, double velY) {
+void MolManager::addMolecule(MoleculeType type, double x, double y, double vx, double vy) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
 
-    CircleMolecule* molecule = new CircleMolecule(x, y, DEFAULT_WEIGHT);
-    molecule->setSpeed(velX, velY);
+    BaseMolecule* molecule = nullptr;
+
+    switch (type)
+    {
+    case SQUARE:
+        molecule = new SquareMolecule(x, y, DEFAULT_WEIGHT);
+        break;
+    case CIRCLE:
+        molecule = new CircleMolecule(x, y, DEFAULT_WEIGHT);
+        break;
+    default:
+        return;
+    }
+
+    molecule->setSpeed(vx, vy);
 
     listPushBack(this->molecules, molecule);
 }
 
-void Manager::addSquare(double x, double y, double velX, double velY) {
-    ON_ERROR(!this, "Object pointer was null!",);
-    ON_ERROR(!(this->molecules), "Pointer to list was null!",);
-
-    SquareMolecule* molecule = new SquareMolecule(x, y, DEFAULT_WEIGHT);
-    molecule->setSpeed(velX, velY);
-
-    listPushBack(this->molecules, molecule);
-}
-
-void Manager::pressUp(double shift, sf::RenderTexture& moleculeTexture) {
+void MolManager::movePress(MOVE_DIR dir, double shift) {
     ON_ERROR(!this, "Object pointer was null!",);
 
-    this->temperature = (moleculeTexture.getSize().y - this->pressY) * moleculeTexture.getSize().y / 273.15;
-
-    this->pressY -= shift;
-}
-
-void Manager::pressDown(double shift, sf::RenderTexture& moleculeTexture) {
-    ON_ERROR(!this, "Object pointer was null!",);
+    switch (dir)
+    {
+    case UP:
+        shift = -1 * fabs(shift);
+        break;
+    case DOWN:
+        shift = fabs(shift);
+        break;
+    default:
+        return;
+    }
 
     this->pressY += shift;
 }
 
-void Manager::tempUp(double shift) {
+void MolManager::changeTemp(MOVE_DIR dir, double shift) {
     ON_ERROR(!this, "Object pointer was null!",);
+
+    switch (dir)
+    {
+    case UP:
+        shift = -1 * fabs(shift);
+        break;
+    case DOWN:
+        shift = fabs(shift);
+        break;
+    default:
+        return;
+    }
 
     this->temperature += shift;
 }
 
-void Manager::tempDown(double shift) {
+Controller::Controller() :
+    btnManager(nullptr),
+    molManager(nullptr)
+    {}
+
+Controller::Controller(UIManager* _btnManager, MolManager* _molManager) :
+    btnManager(_btnManager),
+    molManager(_molManager)
+    {}
+
+Controller::~Controller() {
     ON_ERROR(!this, "Object pointer was null!",);
 
-    this->temperature -= shift;
+    this->btnManager = nullptr;
+    this->molManager = nullptr;
 }
 
-void addCircle(Manager& manager, sf::RenderTexture& moleculeTexture) {
-    manager.addCircle(rand() % (moleculeTexture.getSize().x - int(DEFAULT_SIZE * 2)), 
-                      rand() % (moleculeTexture.getSize().y - int(DEFAULT_SIZE * 2)));
+UIManager* Controller::getBtnManager() {
+    ON_ERROR(!this, "Object pointer was null!", nullptr);
+
+    return this->btnManager;
 }
 
-void addSquare(Manager& manager, sf::RenderTexture& moleculeTexture) {
-    manager.addSquare(rand() % (moleculeTexture.getSize().x - int(DEFAULT_SIZE * 2)), 
-                      rand() % (moleculeTexture.getSize().y - int(DEFAULT_SIZE * 2)));
+MolManager* Controller::getMolManager() {
+    ON_ERROR(!this, "Object pointer was null!", nullptr);
+
+    return this->molManager;
 }
 
-void pressUp(Manager& manager, sf::RenderTexture& moleculeTexture) {
-    manager.pressUp(PRESS_SHIFT, moleculeTexture);
+void Controller::registerClick() {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    unsigned int btnCnt  = this->btnManager->getBtnCnt();
+    Button**     buttons = this->btnManager->getButtons();
+    sf::Sprite*  btnSpr  = this->btnManager->getSprite();
+
+    if (!buttons || !btnSpr) return;
+
+    for (unsigned int i = 0; i < btnCnt; i++) {
+        Button* btn = buttons[i];
+        if (btn) {
+            sf::Vector2f btnSpritePos = btnSpr->getPosition();
+
+            sf::Vector2i mousePositionTexture = 
+                sf::Mouse::getPosition() - sf::Vector2i(btnSpritePos) - sf::Vector2i(0, 2 * FRAME_WIDTH);
+
+            if (btn->isInside(mousePositionTexture)) {
+                (btn->getFunc())(*this);
+            }
+        }
+    }    
 }
 
-void pressDown(Manager& manager, sf::RenderTexture& moleculeTexture) {
-    manager.pressDown(PRESS_SHIFT, moleculeTexture);
+void Controller::update() {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    MolManager* molManager = this->molManager;
+    UIManager*  btnManager = this->btnManager;
+
+    if (!btnManager || !molManager) return;
+
+    molManager->checkCollisions();
+    this      ->registerClick  ();
+
+    molManager->draw();
+    btnManager->draw();
 }
 
-void tempUp(Manager& manager, sf::RenderTexture& moleculeTexture) {
-    manager.tempUp(TEMP_SHIFT);
+bool collideCircles(BaseMolecule* mol1, BaseMolecule* mol2) {
+    ON_ERROR(!mol1 || !mol2, "Object pointer was null!", false);
+
+    double centre1x = mol1->getX() + mol1->getSize();
+    double centre1y = mol1->getY() + mol1->getSize();
+    double centre2x = mol2->getX() + mol2->getSize();
+    double centre2y = mol2->getY() + mol2->getSize();
+
+    double radSum = mol1->getSize() + mol2->getSize();
+
+    return (centre1x - centre2x) * (centre1x - centre2x) 
+         + (centre1y - centre2y) * (centre1y - centre2y) <= radSum * radSum;
 }
 
-void tempDown(Manager& manager, sf::RenderTexture& moleculeTexture) {
-    manager.tempDown(TEMP_SHIFT);
+bool collideSquareCircle(BaseMolecule* square, BaseMolecule* circle) {
+    ON_ERROR(!square || !circle, "Object pointer was null!", false);
+
+    double rectCentreX = square->getX() + square->getSize() / 2;
+    double rectCentreY = square->getY() + square->getSize() / 2;
+    double circCentreX = circle->getX() + circle->getSize();
+    double circCentreY = circle->getY() + circle->getSize();
+
+    double distanceX = abs(rectCentreX - circCentreX);
+    double distanceY = abs(rectCentreY - circCentreY);
+
+    if ((distanceX > square->getSize() / 2 + circle->getSize()) ||
+        (distanceY > square->getSize() / 2 + circle->getSize())) return false;
+
+    if ((distanceX <= square->getSize() / 2) ||
+        (distanceY <= square->getSize() / 2)) return true;
+
+    double distToCorner = 
+        2 * (circCentreX - square->getSize() / 2) * (circCentreX - square->getSize() / 2); 
+
+    return distToCorner <= circle->getSize() * circle->getSize();
+        
+}
+
+bool collideSquares(BaseMolecule* mol1, BaseMolecule* mol2) {
+    ON_ERROR(!mol1 || !mol2, "Object pointer was null!", false);
+
+    double mol1CentreX = mol1->getX() + mol1->getSize();
+    double mol1CentreY = mol1->getY() + mol1->getSize();
+    double mol2CentreX = mol2->getX() + mol2->getSize();
+    double mol2CentreY = mol2->getY() + mol2->getSize();
+
+    return (abs(mol1CentreX - mol2CentreX) < mol1->getSize() / 2 + mol2->getSize() / 2) &&
+           (abs(mol1CentreY - mol2CentreY) < mol1->getSize() / 2 + mol2->getSize() / 2);
+}
+
+void addCircle(Controller& manager) {
+    MolManager* molManager = manager.getMolManager();
+    if (!molManager) return;
+
+    sf::RenderTexture* molText = molManager->getTexture();
+    if (!molText) return;
+
+    molManager->addMolecule(CIRCLE,
+                            rand() % (molText->getSize().x - int(DEFAULT_SIZE * 2)), 
+                            rand() % (molText->getSize().y - int(DEFAULT_SIZE * 2)));
+}
+
+void addSquare(Controller& manager) {
+    MolManager* molManager = manager.getMolManager();
+    if (!molManager) return;
+
+    sf::RenderTexture* molText = molManager->getTexture();
+    if (!molText) return;
+
+    molManager->addMolecule(SQUARE,
+                            rand() % (molText->getSize().x - int(DEFAULT_SIZE * 2)), 
+                            rand() % (molText->getSize().y - int(DEFAULT_SIZE * 2)));
+}
+
+void pressUp(Controller& manager) {
+    MolManager* molManager = manager.getMolManager();
+    if (!molManager) return;
+
+    sf::RenderTexture* molText = molManager->getTexture();
+    if (!molText) return;
+
+    molManager->movePress(UP, PRESS_SHIFT);
+}
+
+void pressDown(Controller& manager) {
+    MolManager* molManager = manager.getMolManager();
+    if (!molManager) return;
+
+    sf::RenderTexture* molText = molManager->getTexture();
+    if (!molText) return;
+
+    molManager->movePress(DOWN, PRESS_SHIFT);
+}
+
+void tempUp(Controller& manager) {
+    MolManager* molManager = manager.getMolManager();
+    if (!molManager) return;     
+
+    sf::RenderTexture* molText = molManager->getTexture();
+    if (!molText) return;      
+
+    molManager->changeTemp(UP, TEMP_SHIFT);
+}
+
+void tempDown(Controller& manager) {
+    MolManager* molManager = manager.getMolManager();
+    if (!molManager) return;     
+
+    sf::RenderTexture* molText = molManager->getTexture();
+    if (!molText) return;      
+     
+    molManager->changeTemp(DOWN, TEMP_SHIFT);
 }
