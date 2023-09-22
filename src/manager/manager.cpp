@@ -327,14 +327,55 @@ void MolManager::changeTemp(MOVE_DIR dir, double shift) {
     this->temperature += shift;
 }
 
-Controller::Controller() :
-    btnManager(nullptr),
-    molManager(nullptr)
+PlotManager::PlotManager() :
+    BaseManager(),
+    plots  (nullptr),
+    plotCnt(0)
     {}
 
-Controller::Controller(UIManager* _btnManager, MolManager* _molManager) :
+PlotManager::PlotManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, Plot** _plots, unsigned int _plotCnt) :
+    BaseManager(_texture, _sprite),
+    plots  (_plots),
+    plotCnt(_plotCnt)
+    {}
+
+PlotManager::~PlotManager() {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->plots   = nullptr;
+    this->plotCnt = 0;
+}
+
+void PlotManager::draw() {
+    ON_ERROR(!this, "Object pointer was null!",);
+    ON_ERROR(!this->plots, "Plot pointer was null!",);
+    ON_ERROR(!this->texture || !this->sprite, "Drawable area was null!",);
+
+    this->texture->clear();
+
+    sf::Vector2f testPoint(15, 15);
+    
+    for (unsigned int i = 0; i < this->plotCnt; i++) {
+        Plot* plot = this->plots[i];
+        if (plot) {
+            plot->addPoint(testPoint);
+            plot->draw(*(this->texture), this->sprite->getPosition());
+        }
+    }
+
+    this->texture->display();
+}
+
+Controller::Controller() :
+    btnManager(nullptr),
+    molManager(nullptr),
+    pltManager(nullptr)
+    {}
+
+Controller::Controller(UIManager* _btnManager, MolManager* _molManager, PlotManager* _pltManager) :
     btnManager(_btnManager),
-    molManager(_molManager)
+    molManager(_molManager),
+    pltManager(_pltManager)
     {}
 
 Controller::~Controller() {
@@ -342,6 +383,7 @@ Controller::~Controller() {
 
     this->btnManager = nullptr;
     this->molManager = nullptr;
+    this->pltManager = nullptr;
 }
 
 UIManager* Controller::getBtnManager() {
@@ -394,6 +436,7 @@ void Controller::update() {
 
     molManager->draw();
     btnManager->draw();
+    pltManager->draw();
 }
 
 bool collideCircles(BaseMolecule* mol1, BaseMolecule* mol2) {

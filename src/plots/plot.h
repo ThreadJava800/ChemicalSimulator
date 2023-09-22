@@ -8,7 +8,7 @@ private:
     double    xOrigin, yOrigin;
     double    xUnit  , yUnit;
 
-    void drawPoints(sf::RenderTexture& texture, sf::Vector2f& coordStart);
+    void drawPoints(sf::RenderTexture& texture, const sf::Vector2f coordStart);
     void drawFrame (sf::RenderTexture& texture);
 
 public:
@@ -20,7 +20,7 @@ public:
     double getXUnit  ();
     double getYUnit  ();
 
-    void draw(sf::RenderTexture& texture, sf::Vector2f& coordStart);
+    void draw(sf::RenderTexture& texture, const sf::Vector2f coordStart);
 };
 
 class Vector {
@@ -64,6 +64,7 @@ private:
     CoordinatePlane* plane    = nullptr;
     sf::Vector2f*    points   = nullptr;
     unsigned int     capacity = 0;
+    unsigned int     size     = 0;
 
 public:
     Plot();
@@ -71,14 +72,15 @@ public:
 
     ~Plot();
 
-    void draw(sf::RenderTexture& texture, sf::Vector2f& coordStart);
+    void draw(sf::RenderTexture& texture, const sf::Vector2f coordStart);
+    void addPoint(sf::Vector2f& point);
 };
 
 sf::Vector2f vecGraphToCoord(sf::RenderTexture& texture, 
                              CoordinatePlane& coordPlane, 
                              double x, 
                              double y,
-                             sf::Vector2f& coordStart);
+                             const sf::Vector2f coordStart);
 
 sf::Vector2f vecCoordToGraph(sf::RenderTexture& texture, 
                              CoordinatePlane& coordPlane, 

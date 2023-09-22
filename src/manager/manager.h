@@ -71,19 +71,29 @@ public:
     void changeTemp     (MOVE_DIR dir, double shift);
 };
 
-// class PlotManager : BaseManager {
-// private:
-    
-// };
+class PlotManager : BaseManager {
+private:
+    Plot**       plots   = nullptr;
+    unsigned int plotCnt = 0;
+
+public:
+    PlotManager();
+    PlotManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, Plot** _plots, unsigned int _plotCnt);
+
+    ~PlotManager();
+
+    void draw() override;
+};
 
 class Controller {
 private:
-    UIManager*  btnManager = nullptr;
-    MolManager* molManager = nullptr;
+    UIManager*   btnManager = nullptr;
+    MolManager*  molManager = nullptr;
+    PlotManager* pltManager = nullptr; 
 
 public:
     Controller();
-    Controller(UIManager* _btnManager, MolManager* _molManager);
+    Controller(UIManager* _btnManager, MolManager* _molManager, PlotManager* _pltManager);
 
     ~Controller();
 

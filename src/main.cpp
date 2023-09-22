@@ -21,6 +21,12 @@ int main() {
     sf::Sprite buttonSprite(buttonTexture.getTexture());
     buttonSprite.setPosition(0, 800);
 
+    sf::RenderTexture plotTexture;
+    plotTexture.create(480, 480);
+    plotTexture.setSmooth(true);
+    sf::Sprite plotSprite(plotTexture.getTexture());
+    plotSprite.setPosition(960, 0);
+
     sf::Text addCrcl = sf::Text(L"+○", font, 40);
     CircleButton addCrclBtn = CircleButton(20, 20, 60, &addCrcl, addCircle);
     sf::Text addSqua = sf::Text(L"+□", font, 40);
@@ -42,9 +48,16 @@ int main() {
     buttons[4] = &prstmpUpBtn;
     buttons[5] = &prstmpDwnBtn;
 
-    UIManager  btnManager = UIManager (&buttonTexture, &buttonSprite, buttons, BUTTON_CNT);
-    MolManager molManager = MolManager(&moleculeTexture, &moleculeSprite, 0, 273.15);
-    Controller bossOfGym  = Controller(&btnManager, &molManager);
+    CoordinatePlane testPlane = CoordinatePlane(240, 240, 50, 50);
+    Plot testPlt = Plot(&testPlane, 30);
+
+    Plot** plots = new Plot*[1];
+    plots[0] = &testPlt;
+
+    UIManager   btnManager = UIManager  (&buttonTexture, &buttonSprite, buttons, BUTTON_CNT);
+    MolManager  molManager = MolManager (&moleculeTexture, &moleculeSprite, 0, 273.15);
+    PlotManager pltManager = PlotManager(&plotTexture, &plotSprite, plots, 1);
+    Controller bossOfGym   = Controller (&btnManager, &molManager, &pltManager);
 
     for (unsigned int i = 0; i < START_MOL_CNT; i++)
         bossOfGym.getMolManager()->addMolecule(CIRCLE,
@@ -79,11 +92,13 @@ int main() {
 
         window.draw(moleculeSprite);
         window.draw(buttonSprite);
+        window.draw(plotSprite);
 
         window.display();
     }
 
     delete[] buttons;
+    delete[] plots;
 
     return 0;
 }
