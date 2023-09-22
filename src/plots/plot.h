@@ -59,6 +59,21 @@ public:
     friend Vector operator!(const Vector& a);
 };
 
+class Plot {
+private:
+    CoordinatePlane* plane    = nullptr;
+    sf::Vector2f*    points   = nullptr;
+    unsigned int     capacity = 0;
+
+public:
+    Plot();
+    Plot(CoordinatePlane* plane, unsigned int capacity);
+
+    ~Plot();
+
+    void draw(sf::RenderTexture& texture, sf::Vector2f& coordStart);
+};
+
 sf::Vector2f vecGraphToCoord(sf::RenderTexture& texture, 
                              CoordinatePlane& coordPlane, 
                              double x, 

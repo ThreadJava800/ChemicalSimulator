@@ -5,6 +5,7 @@
 #include "../objects/objects.h"
 #include "../../LinkedList/list.h"
 #include "../buttons/button.h"
+#include "../plots/plot.h"
 
 class BaseManager {
 protected:
@@ -69,6 +70,11 @@ public:
     void movePress      (MOVE_DIR dir, double shift);
     void changeTemp     (MOVE_DIR dir, double shift);
 };
+
+// class PlotManager : BaseManager {
+// private:
+    
+// };
 
 class Controller {
 private:

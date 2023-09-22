@@ -207,3 +207,42 @@ Vector operator*(const Vector& a, double scalar) {
 Vector operator!(const Vector& a) {
     return Vector((-1 * a.y) / a.len(), a.x / a.len(), a.color);
 }
+
+Plot::Plot() :
+    plane (nullptr),
+    points(nullptr)
+    {}
+
+Plot::Plot(CoordinatePlane* plane, unsigned int capacity) :
+    plane   (plane),
+    capacity(capacity)
+{
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->points = new sf::Vector2f[capacity];
+    ON_ERROR(!this->points, "Unable to allocate memory!",);
+}
+
+Plot::~Plot() {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->plane    = nullptr;
+    this->capacity = 0;
+
+    delete[] this->points;
+    this->points   = nullptr;
+}
+
+void Plot::draw(sf::RenderTexture& texture, sf::Vector2f& coordStart) {
+    ON_ERROR(!this, "Object pointer was null!",);
+    ON_ERROR(!this->plane, "Plane object is null!",);
+
+    this->plane->draw(texture, coordStart);
+
+    sf::VertexArray drawPoints(sf::Points, this->capacity);
+    for (unsigned int i = 0; i < this->capacity; i++) {
+        drawPoints[i].position = points[i];
+    }
+
+    texture.draw(drawPoints);
+}
