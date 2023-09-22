@@ -86,7 +86,7 @@ void UIManager::draw() {
 MolManager::MolManager() :
     BaseManager  (),
     molecules    (nullptr),
-    pressY       (0),
+    pressY       (FRAME_WIDTH),
     temperature  (273.15)
     {}
 
@@ -291,6 +291,12 @@ void MolManager::movePress(MOVE_DIR dir, double shift) {
     }
 
     this->pressY += shift;
+
+    if (this->pressY <= FRAME_WIDTH) 
+        this->pressY = FRAME_WIDTH;
+
+    if (this->pressY >= this->getTexture()->getSize().y - PRS_MAX_SHIFT)
+        this->pressY = this->getTexture()->getSize().y - PRS_MAX_SHIFT;
 }
 
 void MolManager::changeTemp(MOVE_DIR dir, double shift) {

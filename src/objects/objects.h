@@ -3,9 +3,6 @@
 
 #include "../constants.h"
 
-const double START_IMPULSE  = 0.00001;
-const double START_VELOCITY = sqrt(START_IMPULSE);
-
 enum MoleculeType {
     ERROR_TYPE = -1,
     SQUARE = 0,

@@ -3,6 +3,12 @@
 int main() {
     srand((unsigned) time(NULL));
 
+    sf::Texture plotBackground;
+    plotBackground.loadFromFile(PLOT_BACK);
+    sf::Sprite plotBackgrSprite;
+    plotBackgrSprite.setTexture(plotBackground);
+    plotBackgrSprite.setPosition(700, 0);
+
     sf::Font font;
     font.loadFromFile(DEFAULT_FONT);
 
@@ -27,18 +33,29 @@ int main() {
     sf::Sprite plotSprite(plotTexture.getTexture());
     plotSprite.setPosition(960, 0);
 
-    sf::Text addCrcl = sf::Text(L"+○", font, 40);
-    CircleButton addCrclBtn = CircleButton(20, 20, 60, &addCrcl, addCircle);
-    sf::Text addSqua = sf::Text(L"+□", font, 40);
-    CircleButton addSquaBtn = CircleButton(180, 20, 60, &addSqua, addSquare);
-    sf::Text prsUp   = sf::Text(L"↑", font, 40);
-    SquareButton prsUpBtn = SquareButton(350, 30, 100, 100, &prsUp, pressUp);
-    sf::Text prsDwn   = sf::Text(L"↓", font, 40);
-    SquareButton prsDwnBtn = SquareButton(510, 30, 100, 100, &prsDwn, pressDown);
-    sf::Text tmpUp   = sf::Text(L"+°", font, 40);
-    CircleButton prstmpUpBtn = CircleButton(670, 20, 60, &tmpUp, tempUp);
-    sf::Text tmpDwn   = sf::Text(L"-°", font, 40);
-    CircleButton prstmpDwnBtn = CircleButton(820, 20, 60, &tmpDwn, tempDown);
+    sf::Texture addCircleTexture;
+    addCircleTexture.loadFromFile(ADD_CRCL);
+    CircleImageButton addCrclBtn = CircleImageButton(20, 20, 60, &addCircleTexture, addCircle);
+
+    sf::Texture addSquareTexture;
+    addSquareTexture.loadFromFile(ADD_SQUARE);
+    SquareImageButton addSquaBtn = SquareImageButton(180, 20, 120, 120, &addSquareTexture, addSquare);
+
+    sf::Texture addPrsUpTexture;
+    addPrsUpTexture.loadFromFile(PRESS_UP);
+    SquareImageButton prsUpBtn = SquareImageButton(350, 20, 120, 120, &addPrsUpTexture, pressUp);
+
+    sf::Texture addPrsDwnTexture;
+    addPrsDwnTexture.loadFromFile(PRESS_DOWN);
+    SquareImageButton prsDwnBtn = SquareImageButton(510, 20, 120, 120, &addPrsDwnTexture, pressDown);
+
+    sf::Texture addTempUpTexture;
+    addTempUpTexture.loadFromFile(TEMP_UP);
+    CircleImageButton prstmpUpBtn = CircleImageButton(670, 20, 60, &addTempUpTexture, tempUp);
+
+    sf::Texture addTempDwnTexture;
+    addTempDwnTexture.loadFromFile(TEMP_DOWN);
+    CircleImageButton prstmpDwnBtn = CircleImageButton(820, 20, 60, &addTempDwnTexture, tempDown);
 
     Button** buttons = new Button*[BUTTON_CNT];
     buttons[0] = &addCrclBtn;
@@ -69,7 +86,7 @@ int main() {
     Plot pressPlot = Plot(&pressPlane, 480);
 
     UIManager   btnManager = UIManager  (&buttonTexture, &buttonSprite, buttons, BUTTON_CNT);
-    MolManager  molManager = MolManager (&moleculeTexture, &moleculeSprite, 0, 273.15);
+    MolManager  molManager = MolManager (&moleculeTexture, &moleculeSprite, FRAME_WIDTH, 273.15);
     PlotManager pltManager = PlotManager(&plotTexture, &plotSprite, &testPlt, &crclPlot, &sqrtPlt, &pressPlot);
     Controller  bossOfGym  = Controller (&btnManager, &molManager, &pltManager);
 
@@ -104,6 +121,8 @@ int main() {
         }
 
         window.clear();
+
+        window.draw(plotBackgrSprite);
 
         bossOfGym.update();
         if (++delay > FRAME_DELAY) {

@@ -5,16 +5,21 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
+// molecules constants
 const double       DEFAULT_SIZE   = 10;
 const int          FRAME_WIDTH    = 10;
 const unsigned int DEFAULT_WEIGHT = 1;
 const sf::Color    CIRCLE_COL     = sf::Color::Blue;
 const sf::Color    SQUARE_COL     = sf::Color::Red;
-const static char* DEFAULT_FONT   = "assets/Arial.ttf";
-const unsigned int BUTTON_CNT     = 6;
 const unsigned int START_MOL_CNT  = 25;
 const double       TEMP_SHIFT     = 10;
 const double       PRESS_SHIFT    = 10;
+const double       START_IMPULSE  = 0.00001;
+const double       START_VELOCITY = sqrt(START_IMPULSE);
+const double       PRS_MAX_SHIFT  = 100;
+
+// button constants
+const unsigned int BUTTON_CNT     = 6;
 
 //plot
 const float     UNIT_POINT_RAD         = 8;
@@ -25,6 +30,16 @@ const size_t    FRAME_DELAY            = 70;
 const float     TEMP_COEFF             = 0.1;
 const float     MOL_COEFF              = 5;
 const float     PRESS_COEFF            = 20000;
+
+// files
+const static char* DEFAULT_FONT = "assets/Arial.ttf";
+const static char* PLOT_BACK    = "assets/plot.jpg";
+const static char* ADD_CRCL     = "assets/addCircle.png";
+const static char* ADD_SQUARE   = "assets/addSquare.png";
+const static char* PRESS_DOWN   = "assets/pressDown.png";
+const static char* PRESS_UP     = "assets/pressUp.png";
+const static char* TEMP_DOWN    = "assets/tempDown.png";
+const static char* TEMP_UP      = "assets/tempUp.png";
 
 #define ON_ERROR(expr, errStr, retVal) {                 \
     if (expr) {                                           \

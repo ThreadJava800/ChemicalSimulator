@@ -35,7 +35,7 @@ public:
 };
 
 class SquareButton : public Button {
-private:
+protected:
     double height = 0;
 public:
     SquareButton(double x, double y, double width, double height, ButtonFunc onClick);
@@ -43,6 +43,28 @@ public:
 
     void draw(sf::RenderTexture& drawTexture) override;
     bool isInside(sf::Vector2i mousePosition) override;
+};
+
+class CircleImageButton : public CircleButton {
+private:
+    sf::Texture* texture;
+
+public:
+    CircleImageButton(double x, double y, double radius, ButtonFunc onClick);
+    CircleImageButton(double x, double y, double radius, sf::Texture* texture, ButtonFunc onClick);
+
+    void draw(sf::RenderTexture& drawTexture) override;
+};
+
+class SquareImageButton : public SquareButton {
+private:
+    sf::Texture* texture;
+
+public:
+    SquareImageButton(double x, double y, double width, double height, ButtonFunc onClick);
+    SquareImageButton(double x, double y, double width, double height, sf::Texture* texture, ButtonFunc onClick);
+
+    void draw(sf::RenderTexture& drawTexture) override;
 };
 
 #endif

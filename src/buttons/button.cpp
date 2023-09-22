@@ -100,3 +100,42 @@ bool SquareButton::isInside(sf::Vector2i mousePosition) {
     return (this->x <= mousePosition.x && mousePosition.x <= this->x + this->size) && 
            (this->y <= mousePosition.y && mousePosition.y <= this->y + this->height);
 }
+
+CircleImageButton::CircleImageButton(double x, double y, double radius, ButtonFunc onClick) :
+    CircleButton(x, y, radius, onClick)
+    {}
+
+CircleImageButton::CircleImageButton(double x, double y, double radius, sf::Texture* texture, ButtonFunc onClick) :
+    CircleButton(x, y, radius, onClick),
+    texture(texture)
+    {}
+
+void CircleImageButton::draw(sf::RenderTexture& drawTexture) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    sf::CircleShape circle(this->size);
+    circle.setPosition(this->x, this->y);
+    circle.setTexture    (this->texture);
+
+    drawTexture.draw(circle);
+}
+
+SquareImageButton::SquareImageButton(double x, double y, double width, double height, ButtonFunc onClick) :
+    SquareButton(x, y, width, height, onClick),
+    texture(nullptr)
+    {}
+
+SquareImageButton::SquareImageButton(double x, double y, double width, double height, sf::Texture* texture, ButtonFunc onClick) :
+    SquareButton(x, y, width, height, onClick),
+    texture(texture)
+    {}
+
+void SquareImageButton::draw(sf::RenderTexture& drawTexture) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    sf::RectangleShape rect = sf::RectangleShape(sf::Vector2f(this->size, this->height));
+    rect.setPosition(this->x, this->y);
+    rect.setTexture(this->texture);
+
+    drawTexture.draw(rect);
+}
