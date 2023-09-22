@@ -12,7 +12,7 @@ const sf::Color    CIRCLE_COL     = sf::Color::Blue;
 const sf::Color    SQUARE_COL     = sf::Color::Red;
 const static char* DEFAULT_FONT   = "assets/Arial.ttf";
 const unsigned int BUTTON_CNT     = 6;
-const unsigned int START_MOL_CNT  = 50;
+const unsigned int START_MOL_CNT  = 15;
 const double       TEMP_SHIFT     = 10;
 const double       PRESS_SHIFT    = 10;
 

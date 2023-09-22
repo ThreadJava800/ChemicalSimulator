@@ -128,10 +128,24 @@ MolManager::~MolManager() {
 void MolManager::moveAll() {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
+    ON_ERROR(!(this->texture), "Pointer to texture was null!",);
 
     for (long i = 0; i <= this->molecules->size; i++) {
         BaseMolecule* molecule = this->molecules->values[i].value;
         if (molecule) molecule->move(*(this->texture), this->pressY, this->temperature);
+    }
+}
+
+void MolManager::resizeAll() {
+    ON_ERROR(!this, "Object pointer was null!",);
+    ON_ERROR(!(this->molecules), "Pointer to list was null!",);
+    ON_ERROR(!(this->texture), "Pointer to texture was null!",);
+
+    long moleculeCount = this->molecules->size;
+
+    for (long i = 0; i < moleculeCount; i++) {
+        BaseMolecule* molecule = this->molecules->values[i].value;
+        if (molecule) molecule->resize(*(this->texture));
     }
 }
 
@@ -376,6 +390,7 @@ void Controller::update() {
 
     molManager->checkCollisions();
     molManager->moveAll        ();
+    molManager->resizeAll      ();
 
     molManager->draw();
     btnManager->draw();

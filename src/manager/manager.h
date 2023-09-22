@@ -62,6 +62,7 @@ public:
     void draw() override;
 
     void moveAll        ();
+    void resizeAll      ();
     void checkCollisions();
     void tryCollide     (long ind1, long ind2);
     void addMolecule    (MoleculeType type, double x, double y, double vx = 1, double vy = 1);

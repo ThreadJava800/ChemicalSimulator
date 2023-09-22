@@ -44,6 +44,12 @@ void BaseMolecule::setSpeed(double velX, double velY) {
     this->velocityY *= velY;
 }
 
+void BaseMolecule::resize(sf::RenderTexture& texture) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->size = this->weight * DEFAULT_SIZE;
+}
+
 void BaseMolecule::move(sf::RenderTexture& texture, double press, double temperature) {
     ON_ERROR(!this, "Object pointer was null!",);
 
