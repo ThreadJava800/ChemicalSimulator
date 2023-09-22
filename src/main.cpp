@@ -77,7 +77,6 @@ int main() {
         // buttonTexture  .clear();
         window         .clear();
 
-
         bossOfGym.update();
 
         window.draw(moleculeSprite);
