@@ -3,7 +3,7 @@
 
 #include "../constants.h"
 
-const double START_IMPULSE  = 0.000001;
+const double START_IMPULSE  = 0.0009;
 const double START_VELOCITY = sqrt(START_IMPULSE);
 
 enum MoleculeType {

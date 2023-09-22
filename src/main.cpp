@@ -52,10 +52,14 @@ int main() {
     Plot testPlt = Plot(&testPlane, 480);
     CoordinatePlane crclPlane = CoordinatePlane(620, 240, 50, 50, 480, 0, 480, 540);
     Plot crclPlot = Plot(&crclPlane, 480);
+    CoordinatePlane sqrPlane = CoordinatePlane(240, 240, 50, 50, 0, 480, 480, 540);
+    Plot sqrtPlt = Plot(&sqrPlane, 480);
+    CoordinatePlane pressPlane = CoordinatePlane(620, 240, 50, 50, 480, 480, 480, 540);
+    Plot pressPlot = Plot(&pressPlane, 480);
 
     UIManager   btnManager = UIManager  (&buttonTexture, &buttonSprite, buttons, BUTTON_CNT);
     MolManager  molManager = MolManager (&moleculeTexture, &moleculeSprite, 0, 273.15);
-    PlotManager pltManager = PlotManager(&plotTexture, &plotSprite, &testPlt, &crclPlot,nullptr, nullptr);
+    PlotManager pltManager = PlotManager(&plotTexture, &plotSprite, &testPlt, &crclPlot, &sqrtPlt, &pressPlot);
     Controller  bossOfGym  = Controller (&btnManager, &molManager, &pltManager);
 
     for (unsigned int i = 0; i < START_MOL_CNT; i++)

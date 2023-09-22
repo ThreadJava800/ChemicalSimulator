@@ -12,7 +12,7 @@ const sf::Color    CIRCLE_COL     = sf::Color::Blue;
 const sf::Color    SQUARE_COL     = sf::Color::Red;
 const static char* DEFAULT_FONT   = "assets/Arial.ttf";
 const unsigned int BUTTON_CNT     = 6;
-const unsigned int START_MOL_CNT  = 15;
+const unsigned int START_MOL_CNT  = 25;
 const double       TEMP_SHIFT     = 10;
 const double       PRESS_SHIFT    = 10;
 
@@ -22,6 +22,9 @@ const double    ARROW_SIZE_COEF        = 0.1;
 const sf::Color DEFAULT_LINE_COLOR     = sf::Color::White;
 const sf::Color DEFAULT_UNIT_POINT_COL = sf::Color::Red;
 const size_t    FRAME_DELAY            = 70;
+const float     TEMP_COEFF             = 0.1;
+const float     MOL_COEFF              = 5;
+const float     PRESS_COEFF            = 20000;
 
 #define ON_ERROR(expr, errStr, retVal) {                 \
     if (expr) {                                           \

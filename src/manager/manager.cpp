@@ -84,16 +84,20 @@ void UIManager::draw() {
 }
 
 MolManager::MolManager() :
-    BaseManager(),
-    molecules  (nullptr),
-    pressY     (0),
-    temperature(273.15)
+    BaseManager  (),
+    molecules    (nullptr),
+    pressY       (0),
+    temperature  (273.15),
+    collisionCnt (0),
+    collisionTime(0)
     {}
 
 MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, double _pressY, double _temperature) : 
-    BaseManager(_texture, _sprite),
-    pressY     (_pressY),
-    temperature(_temperature) 
+    BaseManager  (_texture, _sprite),
+    pressY       (_pressY),
+    temperature  (_temperature),
+    collisionCnt (0),
+    collisionTime(0)
 {
     ON_ERROR(!this, "Object pointer was null!",);
 
@@ -102,10 +106,12 @@ MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, double 
 }
 
 MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List_t* _molecules, double _pressY, double _temperature) :
-    BaseManager(_texture, _sprite),
-    molecules  (_molecules),
-    pressY     (_pressY),
-    temperature(_temperature)
+    BaseManager  (_texture, _sprite),
+    molecules    (_molecules),
+    pressY       (_pressY),
+    temperature  (_temperature),
+    collisionCnt (0),
+    collisionTime(0)
     {}
 
 MolManager::~MolManager() {
@@ -121,8 +127,10 @@ MolManager::~MolManager() {
     listDtor(this->molecules);
     delete this->molecules;
 
-    this->molecules = nullptr;
-    this->pressY    = 0;
+    this->molecules     = nullptr;
+    this->pressY        = 0;
+    this->collisionCnt  = 0;
+    this->collisionTime = 0;
 }
 
 double MolManager::getTemperature() {
@@ -151,7 +159,7 @@ uint MolManager::getMolTypeCount(MoleculeType type) {
 double MolManager::getPressure() {
     ON_ERROR(!this, "Object pointer was null!", 0);
 
-    return 15;
+    return this->temperature / (this->getTexture()->getSize().x * (this->getTexture()->getSize().y - this->pressY));
 }
 
 void MolManager::moveAll() {
@@ -218,6 +226,8 @@ void MolManager::checkCollisions() {
 
     long moleculeCount = this->molecules->size;
 
+    this->collisionTime++;
+
     for (long i = 0; i <= moleculeCount; i++) {
         for (long j = i + 1; j <= moleculeCount; j++) {
             tryCollide(i, j);
@@ -248,6 +258,8 @@ void MolManager::tryCollide(long ind1, long ind2) {
 
             delete molecule1;
             delete molecule2;
+
+            this->collisionCnt++;
         }
         return;
     }
@@ -257,6 +269,8 @@ void MolManager::tryCollide(long ind1, long ind2) {
                 listPointer->values[ind2].value->addWeight(molecule1->getWeight());
 
                 delete molecule1;
+
+                this->collisionCnt++;
             }
         return;
     }
@@ -266,6 +280,8 @@ void MolManager::tryCollide(long ind1, long ind2) {
                 listPointer->values[ind1].value->addWeight(molecule2->getWeight());
 
                 delete molecule2;
+
+                this->collisionCnt++;
             }
         return;
     }
@@ -292,6 +308,8 @@ void MolManager::tryCollide(long ind1, long ind2) {
 
                     addMolecule(CIRCLE, circleX, circleY, speedX, speedY);
                 }
+
+                this->collisionCnt++;
             }
         return;
     }
@@ -336,6 +354,9 @@ void MolManager::movePress(MOVE_DIR dir, double shift) {
     }
 
     this->pressY += shift;
+
+    this->collisionCnt  = 0;
+    this->collisionTime = 0;
 }
 
 void MolManager::changeTemp(MOVE_DIR dir, double shift) {
@@ -534,10 +555,10 @@ void Controller::updatePlot(size_t frameNum) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!this->molManager || !this->pltManager, "Manager pointer was null!",);
 
-    sf::Vector2f tempPoint    (frameNum, pltManager->getTempPlot()  ->getPlane()->getYOrigin() - molManager->getTemperature());
-    sf::Vector2f circlePoint  (frameNum, pltManager->getCirclePlot()->getPlane()->getYOrigin() - molManager->getMolTypeCount(CIRCLE));
-    sf::Vector2f squarePoint  (frameNum, pltManager->getSquarePlot()->getPlane()->getYOrigin() - molManager->getMolTypeCount(SQUARE));
-    sf::Vector2f pressurePoint(frameNum, pltManager->getPressPlot() ->getPlane()->getYOrigin() - molManager->getPressure());
+    sf::Vector2f tempPoint    (frameNum, pltManager->getTempPlot()  ->getPlane()->getYOrigin() - molManager->getTemperature() * TEMP_COEFF);
+    sf::Vector2f circlePoint  (frameNum, pltManager->getCirclePlot()->getPlane()->getYOrigin() - molManager->getMolTypeCount(CIRCLE) * MOL_COEFF);
+    sf::Vector2f squarePoint  (frameNum, pltManager->getSquarePlot()->getPlane()->getYOrigin() - molManager->getMolTypeCount(SQUARE) * MOL_COEFF);
+    sf::Vector2f pressurePoint(frameNum, pltManager->getPressPlot() ->getPlane()->getYOrigin() - molManager->getPressure() * PRESS_COEFF);
 
     pltManager->addPoints(tempPoint, circlePoint, squarePoint, pressurePoint);
     pltManager->draw();
