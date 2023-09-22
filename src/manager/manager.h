@@ -60,6 +60,10 @@ public:
 
     ~MolManager();
 
+    double getTemperature ();
+    uint   getMolTypeCount(MoleculeType type);
+    double getPressure    ();
+
     void draw() override;
 
     void moveAll        ();
@@ -73,16 +77,28 @@ public:
 
 class PlotManager : BaseManager {
 private:
-    Plot**       plots   = nullptr;
-    unsigned int plotCnt = 0;
+    Plot* tempPlot   = nullptr;
+    Plot* circlePlot = nullptr;
+    Plot* squarePlot = nullptr;
+    Plot* pressPlot  = nullptr;
 
 public:
     PlotManager();
-    PlotManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, Plot** _plots, unsigned int _plotCnt);
+    PlotManager(sf::RenderTexture* _texture, 
+                sf::Sprite* _sprite,
+                Plot* _tempPlot,
+                Plot* _circlePlot,
+                Plot* _squarePlot,
+                Plot* _pressPlot);
 
     ~PlotManager();
 
     void draw() override;
+
+    void addPoints(sf::Vector2f tempPoint, 
+                   sf::Vector2f circlePoint, 
+                   sf::Vector2f squarePoint, 
+                   sf::Vector2f pressPoint);
 };
 
 class Controller {
@@ -102,6 +118,7 @@ public:
 
     void registerClick();
     void update();
+    void updatePlot(size_t frameNum);
 };
 
 void addCircle(Controller& manager);

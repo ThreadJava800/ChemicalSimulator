@@ -243,6 +243,8 @@ void Plot::draw(sf::RenderTexture& texture, const sf::Vector2f coordStart) {
 
     this->plane->draw(texture, coordStart);
 
+    std::cout << this->size % this->capacity << '\n';
+
     sf::VertexArray drawPoints(sf::Points, this->size % this->capacity);
     for (unsigned int i = 0; i < this->size % this->capacity; i++) {
         drawPoints[i].position = points[i];

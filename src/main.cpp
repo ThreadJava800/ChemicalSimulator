@@ -49,20 +49,20 @@ int main() {
     buttons[5] = &prstmpDwnBtn;
 
     CoordinatePlane testPlane = CoordinatePlane(240, 240, 50, 50);
-    Plot testPlt = Plot(&testPlane, 30);
-
-    Plot** plots = new Plot*[1];
-    plots[0] = &testPlt;
+    Plot testPlt = Plot(&testPlane, 480);
 
     UIManager   btnManager = UIManager  (&buttonTexture, &buttonSprite, buttons, BUTTON_CNT);
     MolManager  molManager = MolManager (&moleculeTexture, &moleculeSprite, 0, 273.15);
-    PlotManager pltManager = PlotManager(&plotTexture, &plotSprite, plots, 1);
+    PlotManager pltManager = PlotManager(&plotTexture, &plotSprite, &testPlt, nullptr, nullptr, nullptr);
     Controller bossOfGym   = Controller (&btnManager, &molManager, &pltManager);
 
     for (unsigned int i = 0; i < START_MOL_CNT; i++)
         bossOfGym.getMolManager()->addMolecule(CIRCLE,
                             rand() % (moleculeTexture.getSize().x - int(DEFAULT_SIZE * 2)), 
                             rand() % (moleculeTexture.getSize().y - int(DEFAULT_SIZE * 2)));
+
+    size_t frameCnt = 0;
+    size_t delay    = 100;
 
     while (window.isOpen())
     {
@@ -89,6 +89,10 @@ int main() {
         window.clear();
 
         bossOfGym.update();
+        if (++delay > FRAME_DELAY) {
+            delay = 0;
+            bossOfGym.updatePlot((frameCnt++) % 480);
+        }
 
         window.draw(moleculeSprite);
         window.draw(buttonSprite);
@@ -98,7 +102,6 @@ int main() {
     }
 
     delete[] buttons;
-    delete[] plots;
 
     return 0;
 }

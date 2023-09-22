@@ -21,6 +21,7 @@ const float     UNIT_POINT_RAD         = 8;
 const double    ARROW_SIZE_COEF        = 0.1;
 const sf::Color DEFAULT_LINE_COLOR     = sf::Color::White;
 const sf::Color DEFAULT_UNIT_POINT_COL = sf::Color::Red;
+const size_t    FRAME_DELAY            = 70;
 
 #define ON_ERROR(expr, errStr, retVal) {                 \
     if (expr) {                                           \

@@ -125,6 +125,35 @@ MolManager::~MolManager() {
     this->pressY    = 0;
 }
 
+double MolManager::getTemperature() {
+    ON_ERROR(!this, "Object pointer was null!", 0);
+
+    return this->temperature;
+}
+
+uint MolManager::getMolTypeCount(MoleculeType type) {
+    ON_ERROR(!this, "Object pointer was null!", 0);
+    ON_ERROR(!this->molecules, "Array pointer was null!", 0);
+
+    uint count = 0;
+
+    long moleculeCount = this->molecules->size;
+    for (long i = 0; i < moleculeCount; i++) {
+        BaseMolecule* molecule = this->molecules->values[i].value;
+        if (molecule) {
+            if (molecule->getType() == type) count++;
+        }
+    }
+
+    return count;
+}
+
+double MolManager::getPressure() {
+    ON_ERROR(!this, "Object pointer was null!", 0);
+
+    return 15;
+}
+
 void MolManager::moveAll() {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
@@ -329,41 +358,55 @@ void MolManager::changeTemp(MOVE_DIR dir, double shift) {
 
 PlotManager::PlotManager() :
     BaseManager(),
-    plots  (nullptr),
-    plotCnt(0)
+    tempPlot  (nullptr),
+    circlePlot(nullptr),
+    squarePlot(nullptr),
+    pressPlot (nullptr)
     {}
 
-PlotManager::PlotManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, Plot** _plots, unsigned int _plotCnt) :
+PlotManager::PlotManager(sf::RenderTexture* _texture, 
+                         sf::Sprite* _sprite, 
+                         Plot* _tempPlot, 
+                         Plot* _circlePlot,
+                         Plot* _squarePlot,
+                         Plot* _pressPlot) :
     BaseManager(_texture, _sprite),
-    plots  (_plots),
-    plotCnt(_plotCnt)
+    tempPlot   (_tempPlot),
+    circlePlot (_circlePlot),
+    squarePlot (_squarePlot),
+    pressPlot  (_pressPlot)
     {}
 
 PlotManager::~PlotManager() {
     ON_ERROR(!this, "Object pointer was null!",);
 
-    this->plots   = nullptr;
-    this->plotCnt = 0;
+    this->tempPlot   = nullptr;
+    this->circlePlot = nullptr;
+    this->squarePlot = nullptr;
+    this->pressPlot  = nullptr;
 }
 
 void PlotManager::draw() {
     ON_ERROR(!this, "Object pointer was null!",);
-    ON_ERROR(!this->plots, "Plot pointer was null!",);
     ON_ERROR(!this->texture || !this->sprite, "Drawable area was null!",);
 
     this->texture->clear();
-
-    sf::Vector2f testPoint(15, 15);
     
-    for (unsigned int i = 0; i < this->plotCnt; i++) {
-        Plot* plot = this->plots[i];
-        if (plot) {
-            plot->addPoint(testPoint);
-            plot->draw(*(this->texture), this->sprite->getPosition());
-        }
-    }
+    if (tempPlot)   tempPlot  ->draw(*(this->texture), this->sprite->getPosition());
+    if (circlePlot) circlePlot->draw(*(this->texture), this->sprite->getPosition());
+    if (squarePlot) squarePlot->draw(*(this->texture), this->sprite->getPosition());
+    if (pressPlot)  pressPlot ->draw(*(this->texture), this->sprite->getPosition());
 
     this->texture->display();
+}
+
+void PlotManager::addPoints(sf::Vector2f tempPoint, sf::Vector2f circlePoint, sf::Vector2f squarePoint, sf::Vector2f pressPoint) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    if (tempPlot)   tempPlot  ->addPoint(tempPoint);
+    if (circlePlot) circlePlot->addPoint(circlePoint);
+    if (squarePlot) squarePlot->addPoint(squarePoint);
+    if (pressPlot)  pressPlot ->addPoint(pressPoint);
 }
 
 Controller::Controller() :
@@ -424,6 +467,7 @@ void Controller::registerClick() {
 
 void Controller::update() {
     ON_ERROR(!this, "Object pointer was null!",);
+    ON_ERROR(!this->molManager || !this->btnManager || !this->pltManager, "Manager pointer was null!",);
 
     MolManager* molManager = this->molManager;
     UIManager*  btnManager = this->btnManager;
@@ -436,6 +480,18 @@ void Controller::update() {
 
     molManager->draw();
     btnManager->draw();
+}
+
+void Controller::updatePlot(size_t frameNum) {
+    ON_ERROR(!this, "Object pointer was null!",);
+    ON_ERROR(!this->molManager || !this->pltManager, "Manager pointer was null!",);
+
+    sf::Vector2f tempPoint    (frameNum, this->molManager->getTemperature());
+    sf::Vector2f circlePoint  (frameNum, this->molManager->getMolTypeCount(CIRCLE));
+    sf::Vector2f squarePoint  (frameNum, this->molManager->getMolTypeCount(SQUARE));
+    sf::Vector2f pressurePoint(frameNum, this->molManager->getPressure());
+
+    pltManager->addPoints(tempPoint, circlePoint, squarePoint, pressurePoint);
     pltManager->draw();
 }
 
