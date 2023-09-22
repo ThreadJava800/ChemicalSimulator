@@ -7,6 +7,11 @@
 #include "../buttons/button.h"
 #include "../plots/plot.h"
 
+class MolManager;
+
+typedef bool (*CollideFunc)(BaseMolecule* mol1, BaseMolecule* mol2);
+typedef void (*ProceedFunc)(MolManager& manager, List_t* list, long ind1, long ind2);
+
 class BaseManager {
 protected:
     sf::RenderTexture* texture = nullptr;
@@ -136,5 +141,10 @@ void tempDown (Controller& manager);
 bool collideCircles     (BaseMolecule* mol1,   BaseMolecule* mol2);
 bool collideSquareCircle(BaseMolecule* square, BaseMolecule* circle);
 bool collideSquares     (BaseMolecule* mol1,   BaseMolecule* mol2);
+
+void proceedCircles     (MolManager& manager, List_t* list, long ind1, long ind2);
+void proceedSquares     (MolManager& manager, List_t* list, long ind1, long ind2);
+void proceedCircleSquare(MolManager& manager, List_t* list, long circle, long square);
+void proceedSquareCircle(MolManager& manager, List_t* list, long square, long circle);
 
 #endif

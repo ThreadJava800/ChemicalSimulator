@@ -237,63 +237,18 @@ void MolManager::tryCollide(long ind1, long ind2) {
 
     if (!molecule1 || !molecule2) return;
 
-    if (molecule1->getType() == CIRCLE && molecule2->getType() == CIRCLE) {
-        if (collideCircles(molecule1, molecule2)) {
-            double createX = (molecule1->getX() + molecule2->getX()) / 2;
-            double createY = (molecule1->getY() + molecule2->getY()) / 2;
+    static const CollideFunc checkCollisionFuncs[2][2] = {
+        {collideSquares, collideSquareCircle},
+        {collideSquareCircle, collideCircles}
+    };
 
-            listPushBack(listPointer, new SquareMolecule(createX, createY, molecule1->getWeight() + molecule2->getWeight()));
-            listPointer->values[ind1].value = nullptr;
-            listPointer->values[ind2].value = nullptr;
+    static const ProceedFunc proceedCollideFuncs[2][2] = {
+        {proceedSquares, proceedSquareCircle},
+        {proceedCircleSquare, proceedCircles}
+    };
 
-            delete molecule1;
-            delete molecule2;
-        }
-        return;
-    }
-    if (molecule1->getType() == CIRCLE && molecule2->getType() == SQUARE) {
-        if (collideSquareCircle(molecule2, molecule1)) {
-                listPointer->values[ind1].value = nullptr;
-                listPointer->values[ind2].value->addWeight(molecule1->getWeight());
-
-                delete molecule1;
-            }
-        return;
-    }
-    if (molecule1->getType() == SQUARE && molecule2->getType() == CIRCLE) {
-        if (collideSquareCircle(molecule1, molecule2)) {
-                listPointer->values[ind2].value = nullptr;
-                listPointer->values[ind1].value->addWeight(molecule2->getWeight());
-
-                delete molecule2;
-            }
-        return;
-    }
-    if (molecule1->getType() == SQUARE && molecule2->getType() == SQUARE) {
-        if (collideSquares(molecule1, molecule2)) {
-                unsigned int circleAmount = molecule1->getWeight() + molecule2->getWeight();
-                double createCrlcPointX = (molecule1->getX() + molecule2->getX()) / 2;
-                double createCrlcPointY = (molecule1->getY() + molecule2->getY()) / 2;
-                double diameter = molecule1->getSize() * 2;
-
-                listPointer->values[ind2].value = nullptr;
-                listPointer->values[ind1].value = nullptr;
-
-                delete molecule1;
-                delete molecule2;
-
-                double angle = 2 * M_PI / circleAmount;
-                for (unsigned int i = 0; i < circleAmount; i++) {
-                    double speedY = cos(angle * i);
-                    double speedX = sin(angle * i);
-
-                    double circleX = createCrlcPointX + diameter * speedX;
-                    double circleY = createCrlcPointY + diameter * speedY;
-
-                    addMolecule(CIRCLE, circleX, circleY, speedX, speedY);
-                }
-            }
-        return;
+    if (checkCollisionFuncs[molecule1->getType()][molecule2->getType()](molecule1, molecule2)) {
+        proceedCollideFuncs[molecule1->getType()][molecule2->getType()](*this, listPointer, ind1, ind2);
     }
 }
 
@@ -534,10 +489,10 @@ void Controller::updatePlot(size_t frameNum) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!this->molManager || !this->pltManager, "Manager pointer was null!",);
 
-    sf::Vector2f tempPoint    (frameNum, pltManager->getTempPlot()  ->getPlane()->getYOrigin() - molManager->getTemperature() * TEMP_COEFF);
+    sf::Vector2f tempPoint    (frameNum, pltManager->getTempPlot()  ->getPlane()->getYOrigin() - molManager->getTemperature()        * TEMP_COEFF);
     sf::Vector2f circlePoint  (frameNum, pltManager->getCirclePlot()->getPlane()->getYOrigin() - molManager->getMolTypeCount(CIRCLE) * MOL_COEFF);
     sf::Vector2f squarePoint  (frameNum, pltManager->getSquarePlot()->getPlane()->getYOrigin() - molManager->getMolTypeCount(SQUARE) * MOL_COEFF);
-    sf::Vector2f pressurePoint(frameNum, pltManager->getPressPlot() ->getPlane()->getYOrigin() - molManager->getPressure() * PRESS_COEFF);
+    sf::Vector2f pressurePoint(frameNum, pltManager->getPressPlot() ->getPlane()->getYOrigin() - molManager->getPressure()           * PRESS_COEFF);
 
     pltManager->addPoints(tempPoint, circlePoint, squarePoint, pressurePoint);
     pltManager->draw();
@@ -579,6 +534,72 @@ bool collideSquareCircle(BaseMolecule* square, BaseMolecule* circle) {
 
     return distToCorner <= circle->getSize() * circle->getSize();
         
+}
+
+void proceedCircles(MolManager& manager, List_t* list, long ind1, long ind2) {
+    ON_ERROR(!list, "List pointer was null!",);
+
+    BaseMolecule* molecule1 = list->values[ind1].value;
+    BaseMolecule* molecule2 = list->values[ind2].value;
+
+    double createX = (molecule1->getX() + molecule2->getX()) / 2;
+    double createY = (molecule1->getY() + molecule2->getY()) / 2;
+
+    listPushBack(list, new SquareMolecule(createX, createY, molecule1->getWeight() + molecule2->getWeight()));
+    list->values[ind1].value = nullptr;
+    list->values[ind2].value = nullptr;
+
+    delete molecule1;
+    delete molecule2;
+}
+
+void proceedSquares(MolManager& manager, List_t* list, long ind1, long ind2) {
+    ON_ERROR(!list, "List pointer was null!",);
+
+    BaseMolecule* molecule1 = list->values[ind1].value;
+    BaseMolecule* molecule2 = list->values[ind2].value;
+
+    unsigned int circleAmount = molecule1->getWeight() + molecule2->getWeight();
+    double createCrlcPointX = (molecule1->getX() + molecule2->getX()) / 2;
+    double createCrlcPointY = (molecule1->getY() + molecule2->getY()) / 2;
+    double diameter = molecule1->getSize() * 2;
+
+    list->values[ind2].value = nullptr;
+    list->values[ind1].value = nullptr;
+
+    delete molecule1;
+    delete molecule2;
+
+    double angle = 2 * M_PI / circleAmount;
+    for (unsigned int i = 0; i < circleAmount; i++) {
+        double speedY = cos(angle * i);
+        double speedX = sin(angle * i);
+
+        double circleX = createCrlcPointX + diameter * speedX;
+        double circleY = createCrlcPointY + diameter * speedY;
+
+        manager.addMolecule(CIRCLE, circleX, circleY, speedX, speedY);
+    }
+}
+
+void proceedCircleSquare(MolManager& manager, List_t* list, long circle, long square) {
+    BaseMolecule* molecule1 = list->values[circle].value;
+
+    list->values[circle].value = nullptr;
+    list->values[square].value->addWeight(molecule1->getWeight());
+
+    delete molecule1;
+}
+
+void proceedSquareCircle(MolManager& manager, List_t* list, long square, long circle) {
+    ON_ERROR(!list, "List pointer was null!",);
+
+    BaseMolecule* molecule2 = list->values[circle].value;
+
+    list->values[circle].value = nullptr;
+    list->values[square].value->addWeight(molecule2->getWeight());
+
+    delete molecule2;
 }
 
 bool collideSquares(BaseMolecule* mol1, BaseMolecule* mol2) {

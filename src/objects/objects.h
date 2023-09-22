@@ -7,9 +7,9 @@ const double START_IMPULSE  = 0.0009;
 const double START_VELOCITY = sqrt(START_IMPULSE);
 
 enum MoleculeType {
-    ERROR_TYPE,
-    SQUARE,
-    CIRCLE
+    ERROR_TYPE = -1,
+    SQUARE = 0,
+    CIRCLE = 1
 };
 
 class BaseMolecule {
