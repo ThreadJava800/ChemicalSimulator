@@ -73,9 +73,7 @@ int main() {
             }
         }
 
-        // moleculeTexture.clear();
-        // buttonTexture  .clear();
-        window         .clear();
+        window.clear();
 
         bossOfGym.update();
 

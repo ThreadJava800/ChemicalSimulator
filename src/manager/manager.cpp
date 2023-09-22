@@ -314,10 +314,10 @@ void MolManager::changeTemp(MOVE_DIR dir, double shift) {
 
     switch (dir)
     {
-    case UP:
+    case DOWN:
         shift = -1 * fabs(shift);
         break;
-    case DOWN:
+    case UP:
         shift = fabs(shift);
         break;
     default:
