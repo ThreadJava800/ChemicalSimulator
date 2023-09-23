@@ -48,9 +48,9 @@ void CircleButton::draw(sf::RenderTexture& drawTexture) {
     if (this->text) {
         this->text->setOrigin(this->text->getGlobalBounds().getSize() / 2.f + this->text->getLocalBounds().getPosition());
         this->text->setPosition(circle.getPosition() + sf::Vector2f(circle.getRadius(), circle.getRadius()));
+        drawTexture.draw(*this->text);
     }
 
-    drawTexture.draw(*this->text);
     drawTexture.draw(circle);
 }
 
@@ -88,9 +88,9 @@ void SquareButton::draw(sf::RenderTexture& drawTexture) {
     if (this->text) {
         this->text->setOrigin(this->text->getGlobalBounds().getSize() / 2.f + this->text->getLocalBounds().getPosition());
         this->text->setPosition(rect.getPosition() + (rect.getSize() / 2.f));
+        drawTexture.draw(*this->text);
     }
 
-    drawTexture.draw(*this->text);
     drawTexture.draw(rect);
 }
 
