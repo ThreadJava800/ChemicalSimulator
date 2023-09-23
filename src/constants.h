@@ -33,6 +33,7 @@ const float     PRESS_COEFF            = 20000;
 
 // files
 const static char* DEFAULT_FONT = "assets/Arial.ttf";
+const static char* PLOT_FONT    = "assets/Simple Story.ttf";
 const static char* PLOT_BACK    = "assets/plot.jpg";
 const static char* BTN_BACK     = "assets/btnBack.jpg";
 const static char* MOL_BACK     = "assets/molBack.jpg";

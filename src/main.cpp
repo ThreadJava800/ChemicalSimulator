@@ -4,7 +4,7 @@ int main() {
     srand((unsigned) time(NULL));
 
     sf::Font font;
-    font.loadFromFile(DEFAULT_FONT);
+    font.loadFromFile(PLOT_FONT);
 
     sf::RenderWindow window(sf::VideoMode(), "Chemical simulator", sf::Style::Fullscreen);
     window.setPosition(sf::Vector2i(0, 0));
@@ -59,23 +59,23 @@ int main() {
     buttons[4] = &prstmpUpBtn;
     buttons[5] = &prstmpDwnBtn;
 
-    sf::Text testPlaneName = sf::Text(L" Темп.", font, 20);
+    sf::Text testPlaneName = sf::Text(L" Temp.", font, 20);
     sf::Text testPlaneUnit = sf::Text(" 540K", font, 15);
     CoordinatePlane testPlane = CoordinatePlane(240, 240, 50, 50, 0, 0, 480, 540, &testPlaneName, &testPlaneUnit);
     Plot testPlt = Plot(&testPlane, 480);
 
-    sf::Text crclPlaneName = sf::Text(L" ○", font, 20);
-    sf::Text crclPlaneUnit = sf::Text(L" 5 ○", font, 15);
+    sf::Text crclPlaneName = sf::Text(L" Circles", font, 20);
+    sf::Text crclPlaneUnit = sf::Text(L" 5 c.", font, 15);
     CoordinatePlane crclPlane = CoordinatePlane(620, 240, 50, 50, 480, 0, 480, 540, &crclPlaneName, &crclPlaneUnit);
     Plot crclPlot = Plot(&crclPlane, 480);
 
-    sf::Text sqrPlaneName = sf::Text(L" □", font, 20);
-    sf::Text sqrPlaneUnit = sf::Text(L" 5 □", font, 15);
+    sf::Text sqrPlaneName = sf::Text(L" Squares", font, 20);
+    sf::Text sqrPlaneUnit = sf::Text(L" 5 s.", font, 15);
     CoordinatePlane sqrPlane = CoordinatePlane(240, 240, 50, 50, 0, 480, 480, 540, &sqrPlaneName, &sqrPlaneUnit);
     Plot sqrtPlt = Plot(&sqrPlane, 480);
 
-    sf::Text pressPlaneName = sf::Text(L" Давление", font, 20);
-    sf::Text pressPlaneUnit = sf::Text(L" 1000 у.е.", font, 15);
+    sf::Text pressPlaneName = sf::Text(L" Pressure", font, 20);
+    sf::Text pressPlaneUnit = sf::Text(L" 1000 c.u.", font, 15);
     CoordinatePlane pressPlane = CoordinatePlane(620, 240, 50, 50, 480, 480, 480, 540, &pressPlaneName, &pressPlaneUnit);
     Plot pressPlot = Plot(&pressPlane, 480);
 
