@@ -79,9 +79,15 @@ int main() {
     CoordinatePlane pressPlane = CoordinatePlane(620, 240, 50, 50, 480, 480, 480, 540, &pressPlaneName, &pressPlaneUnit);
     Plot pressPlot = Plot(&pressPlane, 480);
 
+    sf::Texture background;
+    ON_ERROR(!background.loadFromFile(PLOT_BACK), "Can't open file", -1);
+    sf::Sprite plotBackgrSprite;
+    plotBackgrSprite.setTexture(background);
+    plotBackgrSprite.setPosition(-300, 0);
+
     UIManager   btnManager = UIManager  (&buttonTexture, &buttonSprite, buttons, BUTTON_CNT);
     MolManager  molManager = MolManager (&moleculeTexture, &moleculeSprite, FRAME_WIDTH, 273.15);
-    PlotManager pltManager = PlotManager(&plotTexture, &plotSprite, &testPlt, &crclPlot, &sqrtPlt, &pressPlot);
+    PlotManager pltManager = PlotManager(&plotTexture, &plotSprite, &testPlt, &crclPlot, &sqrtPlt, &pressPlot, &plotBackgrSprite);
     Controller  bossOfGym  = Controller (&btnManager, &molManager, &pltManager);
 
     for (unsigned int i = 0; i < START_MOL_CNT; i++)

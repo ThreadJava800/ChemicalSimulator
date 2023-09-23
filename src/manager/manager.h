@@ -81,12 +81,14 @@ public:
     void changeTemp     (MOVE_DIR dir, double shift);
 };
 
-class PlotManager : BaseManager {
+class PlotManager : public BaseManager {
 private:
     Plot* tempPlot   = nullptr;
     Plot* circlePlot = nullptr;
     Plot* squarePlot = nullptr;
     Plot* pressPlot  = nullptr;
+
+    sf::Sprite* backgroundImg = nullptr;
 
 public:
     PlotManager();
@@ -95,7 +97,8 @@ public:
                 Plot* _tempPlot,
                 Plot* _circlePlot,
                 Plot* _squarePlot,
-                Plot* _pressPlot);
+                Plot* _pressPlot,
+                sf::Sprite* backgroundImg);
 
     ~PlotManager();
 
@@ -106,6 +109,7 @@ public:
 
     void draw() override;
 
+    void drawBackground();
     void addPoints(sf::Vector2f tempPoint, 
                    sf::Vector2f circlePoint, 
                    sf::Vector2f squarePoint, 

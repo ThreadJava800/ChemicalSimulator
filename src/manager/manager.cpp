@@ -336,12 +336,14 @@ PlotManager::PlotManager(sf::RenderTexture* _texture,
                          Plot* _tempPlot, 
                          Plot* _circlePlot,
                          Plot* _squarePlot,
-                         Plot* _pressPlot) :
-    BaseManager(_texture, _sprite),
-    tempPlot   (_tempPlot),
-    circlePlot (_circlePlot),
-    squarePlot (_squarePlot),
-    pressPlot  (_pressPlot)
+                         Plot* _pressPlot,
+                         sf::Sprite* backgroundImg) :
+    BaseManager  (_texture, _sprite),
+    tempPlot     (_tempPlot),
+    circlePlot   (_circlePlot),
+    squarePlot   (_squarePlot),
+    pressPlot    (_pressPlot),
+    backgroundImg(backgroundImg)
     {}
 
 PlotManager::~PlotManager() {
@@ -351,6 +353,8 @@ PlotManager::~PlotManager() {
     this->circlePlot = nullptr;
     this->squarePlot = nullptr;
     this->pressPlot  = nullptr;
+
+    this->backgroundImg = nullptr;
 }
 
 Plot* PlotManager::getTempPlot() {
@@ -377,11 +381,16 @@ Plot* PlotManager::getPressPlot() {
     return this->pressPlot;
 }
 
+void PlotManager::drawBackground() {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->texture->clear();
+    if (this->texture) this->texture->draw(*(this->backgroundImg));
+}
+
 void PlotManager::draw() {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!this->texture || !this->sprite, "Drawable area was null!",);
-
-    this->texture->clear();
     
     if (tempPlot)   tempPlot  ->draw(*(this->texture), this->sprite->getPosition());
     if (circlePlot) circlePlot->draw(*(this->texture), this->sprite->getPosition());
@@ -484,8 +493,9 @@ void Controller::update() {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!this->molManager || !this->btnManager || !this->pltManager, "Manager pointer was null!",);
 
-    MolManager* molManager = this->molManager;
-    UIManager*  btnManager = this->btnManager;
+    MolManager* molManager  = this->molManager;
+    UIManager*  btnManager  = this->btnManager;
+    PlotManager* pltManager = this->pltManager;
 
     if (!btnManager || !molManager) return;
 
@@ -506,6 +516,7 @@ void Controller::updatePlot(size_t frameNum) {
     sf::Vector2f squarePoint  (frameNum, pltManager->getSquarePlot()->getPlane()->getYOrigin() - molManager->getMolTypeCount(SQUARE) * MOL_COEFF);
     sf::Vector2f pressurePoint(frameNum, pltManager->getPressPlot() ->getPlane()->getYOrigin() - molManager->getPressure()           * PRESS_COEFF);
 
+    pltManager->drawBackground();
     pltManager->addPoints(tempPoint, circlePoint, squarePoint, pressurePoint);
     pltManager->draw();
 }
