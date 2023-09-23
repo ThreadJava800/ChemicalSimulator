@@ -114,8 +114,8 @@ void CircleImageButton::draw(sf::RenderTexture& drawTexture) {
     ON_ERROR(!this, "Object pointer was null!",);
 
     sf::CircleShape circle(this->size);
-    circle.setPosition(this->x, this->y);
-    circle.setTexture    (this->texture);
+    circle.setPosition    (this->x, this->y);
+    circle.setTexture     (this->texture);
 
     drawTexture.draw(circle);
 }

@@ -65,7 +65,7 @@ void CoordinatePlane::drawPoints(sf::RenderTexture& texture, const sf::Vector2f 
     for (int i = xOrigin; i >= xStart; i -= xUnit) {
         sf::RectangleShape point(sf::Vector2f(UNIT_POINT_RAD, UNIT_POINT_RAD));
 
-        point.setPosition(sf::Vector2f(i - UNIT_POINT_RAD / 2, yOrigin - UNIT_POINT_RAD / 2));
+        point.setPosition (sf::Vector2f(i - UNIT_POINT_RAD / 2, yOrigin - UNIT_POINT_RAD / 2));
         point.setFillColor(DEFAULT_UNIT_POINT_COL);
 
         texture.draw(point);
@@ -120,8 +120,10 @@ void CoordinatePlane::draw(sf::RenderTexture& texture, const sf::Vector2f coordS
     oy.draw(texture, *this, oyStart.x, oyStart.y);
 
     sf::Vector2f namePos = sf::Vector2f(this->xOrigin, yStart);
-    this->yName->setPosition(namePos + sf::Vector2f(2, 15));
-    texture.draw(*this->yName);
+    if (this->yName) { 
+        this->yName->setPosition(namePos + sf::Vector2f(2, 15));
+        texture.draw(*this->yName);
+    }
 
     drawPoints(texture, coordStart);
     drawFrame (texture);
