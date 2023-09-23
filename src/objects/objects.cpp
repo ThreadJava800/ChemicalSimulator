@@ -97,7 +97,7 @@ void CircleMolecule::wallCollision(sf::RenderTexture& texture, double press) {
     double downWall  = texture.getSize().y - FRAME_WIDTH;
 
     if (this->x <= FRAME_WIDTH) this->velocityX = fabs(this->velocityX);
-    if (this->y <= FRAME_WIDTH + press) this->velocityY = fabs(this->velocityY);    
+    if (this->y <= 2 * FRAME_WIDTH + press) this->velocityY = fabs(this->velocityY);    
 
     if (this->x + this->size * 2 >= rightWall) this->velocityX = -1 * fabs(this->velocityX);
     if (this->y + this->size * 2 >= downWall)  this->velocityY = -1 * fabs(this->velocityY);

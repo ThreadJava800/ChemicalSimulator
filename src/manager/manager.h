@@ -68,6 +68,7 @@ public:
     double getTemperature ();
     uint   getMolTypeCount(MoleculeType type);
     double getPressure    ();
+    double getPressY      ();
 
     void draw() override;
 

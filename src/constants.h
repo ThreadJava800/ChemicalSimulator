@@ -16,7 +16,7 @@ const double       TEMP_SHIFT     = 10;
 const double       PRESS_SHIFT    = 10;
 const double       START_IMPULSE  = 0.00001;
 const double       START_VELOCITY = sqrt(START_IMPULSE);
-const double       PRS_MAX_SHIFT  = 100;
+const double       PRS_MAX_SHIFT  = 250;
 
 // button constants
 const unsigned int BUTTON_CNT     = 6;

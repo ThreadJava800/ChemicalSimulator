@@ -3,12 +3,6 @@
 int main() {
     srand((unsigned) time(NULL));
 
-    sf::Texture plotBackground;
-    plotBackground.loadFromFile(PLOT_BACK);
-    sf::Sprite plotBackgrSprite;
-    plotBackgrSprite.setTexture(plotBackground);
-    plotBackgrSprite.setPosition(700, 0);
-
     sf::Font font;
     font.loadFromFile(DEFAULT_FONT);
 
@@ -16,19 +10,19 @@ int main() {
     window.setPosition(sf::Vector2i(0, 0));
 
     sf::RenderTexture moleculeTexture;
-    moleculeTexture.create(960, 800);
+    moleculeTexture.create(960, 880);
     moleculeTexture.setSmooth(true);
     sf::Sprite moleculeSprite(moleculeTexture.getTexture());
     moleculeSprite.setPosition(0, 0);
 
     sf::RenderTexture buttonTexture;
-    buttonTexture.create(960, 240);
+    buttonTexture.create(960, 160);
     buttonTexture.setSmooth(true);
     sf::Sprite buttonSprite(buttonTexture.getTexture());
-    buttonSprite.setPosition(0, 800);
+    buttonSprite.setPosition(0, 880);
 
     sf::RenderTexture plotTexture;
-    plotTexture.create(960, 1080);
+    plotTexture.create(960, 1040);
     plotTexture.setSmooth(true);
     sf::Sprite plotSprite(plotTexture.getTexture());
     plotSprite.setPosition(960, 0);
@@ -121,8 +115,6 @@ int main() {
         }
 
         window.clear();
-
-        window.draw(plotBackgrSprite);
 
         bossOfGym.update();
         if (++delay > FRAME_DELAY) {

@@ -154,6 +154,12 @@ double MolManager::getPressure() {
     return this->temperature / (this->getTexture()->getSize().x * (this->getTexture()->getSize().y - this->pressY));
 }
 
+double MolManager::getPressY() {
+    ON_ERROR(!this, "Object pointer was null!", 0);
+
+    return this->pressY;
+}
+
 void MolManager::moveAll() {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
@@ -584,6 +590,16 @@ void proceedSquares(MolManager& manager, List_t* list, long ind1, long ind2) {
         double circleX = createCrlcPointX + diameter * speedX;
         double circleY = createCrlcPointY + diameter * speedY;
 
+        if (circleX <= FRAME_WIDTH) 
+            circleX = FRAME_WIDTH;
+        if (circleX >= manager.getTexture()->getSize().x - DEFAULT_SIZE)
+            circleX  = manager.getTexture()->getSize().x - DEFAULT_SIZE;
+
+        if (circleY <= 2 * FRAME_WIDTH + manager.getPressY()) 
+            circleY  = 2 * FRAME_WIDTH + manager.getPressY();
+        if (circleY >= manager.getTexture()->getSize().y - DEFAULT_SIZE)
+            circleY  = manager.getTexture()->getSize().y - DEFAULT_SIZE;
+
         manager.addMolecule(CIRCLE, circleX, circleY, speedX, speedY);
     }
 }
@@ -628,8 +644,8 @@ void addCircle(Controller& manager) {
     if (!molText) return;
 
     molManager->addMolecule(CIRCLE,
-                            rand() % (molText->getSize().x - int(DEFAULT_SIZE * 2)), 
-                            rand() % (molText->getSize().y - int(DEFAULT_SIZE * 2)));
+                            2 * DEFAULT_SIZE, 
+                            molText->getSize().y - int(DEFAULT_SIZE * 2));
 }
 
 void addSquare(Controller& manager) {
@@ -640,8 +656,8 @@ void addSquare(Controller& manager) {
     if (!molText) return;
 
     molManager->addMolecule(SQUARE,
-                            rand() % (molText->getSize().x - int(DEFAULT_SIZE * 2)), 
-                            rand() % (molText->getSize().y - int(DEFAULT_SIZE * 2)));
+                            2 * DEFAULT_SIZE, 
+                            molText->getSize().y - int(DEFAULT_SIZE * 2));
 }
 
 void pressUp(Controller& manager) {
