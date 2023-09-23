@@ -14,12 +14,13 @@ typedef void (*ProceedFunc)(MolManager& manager, List_t* list, long ind1, long i
 
 class BaseManager {
 protected:
-    sf::RenderTexture* texture = nullptr;
-    sf::Sprite*        sprite  = nullptr;
+    sf::RenderTexture* texture       = nullptr;
+    sf::Sprite*        sprite        = nullptr;
+    sf::Sprite*        backgroundImg = nullptr;
 
 public:
     BaseManager();
-    BaseManager(sf::RenderTexture* _texture, sf::Sprite* _sprite);
+    BaseManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, sf::Sprite* backgroundImg);
 
     ~BaseManager();
 
@@ -34,9 +35,11 @@ private:
     Button**     buttons = nullptr;
     unsigned int btnCnt  = 0;
 
+
+
 public:
     UIManager();
-    UIManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, Button** buttons, unsigned int btnCnt);
+    UIManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, Button** buttons, unsigned int btnCnt, sf::Sprite* backgroundImg);
 
     ~UIManager();
 
@@ -60,8 +63,8 @@ private:
 
 public:
     MolManager();
-    MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, double _pressY, double _temperature);
-    MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List_t* _molecules, double _pressY, double _temperature);
+    MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, double _pressY, double _temperature, sf::Sprite* backgroundImg);
+    MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List_t* _molecules, double _pressY, double _temperature, sf::Sprite* backgroundImg);
 
     ~MolManager();
 
@@ -87,8 +90,6 @@ private:
     Plot* circlePlot = nullptr;
     Plot* squarePlot = nullptr;
     Plot* pressPlot  = nullptr;
-
-    sf::Sprite* backgroundImg = nullptr;
 
 public:
     PlotManager();

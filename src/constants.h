@@ -34,6 +34,8 @@ const float     PRESS_COEFF            = 20000;
 // files
 const static char* DEFAULT_FONT = "assets/Arial.ttf";
 const static char* PLOT_BACK    = "assets/plot.jpg";
+const static char* BTN_BACK     = "assets/btnBack.jpg";
+const static char* MOL_BACK     = "assets/molBack.jpg";
 const static char* ADD_CRCL     = "assets/addCircle.png";
 const static char* ADD_SQUARE   = "assets/addSquare.png";
 const static char* PRESS_DOWN   = "assets/pressDown.png";

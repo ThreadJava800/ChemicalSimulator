@@ -5,16 +5,18 @@ BaseManager::BaseManager() :
     sprite (nullptr)
     {}
 
-BaseManager::BaseManager(sf::RenderTexture* _texture, sf::Sprite* _sprite) :
-    texture(_texture),
-    sprite (_sprite)
+BaseManager::BaseManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, sf::Sprite* backgroundImg) :
+    texture      (_texture),
+    sprite       (_sprite),
+    backgroundImg(backgroundImg)
     {}
 
 BaseManager::~BaseManager() {
     ON_ERROR(!this, "Object pointer was null!",);
 
-    this->sprite  = nullptr;
-    this->texture = nullptr;
+    this->sprite        = nullptr;
+    this->texture       = nullptr;
+    this->backgroundImg = nullptr;
 }
 
 sf::RenderTexture* BaseManager::getTexture() {
@@ -35,8 +37,8 @@ UIManager::UIManager() :
     btnCnt     (0)
     {}
 
-UIManager::UIManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, Button** buttons, unsigned int btnCnt) :
-    BaseManager(_texture, _sprite),
+UIManager::UIManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, Button** buttons, unsigned int btnCnt, sf::Sprite* backgroundImg) :
+    BaseManager(_texture, _sprite, backgroundImg),
     buttons    (buttons),
     btnCnt     (btnCnt)
     {}
@@ -67,6 +69,8 @@ void UIManager::draw() {
 
     this->texture->clear();
 
+    if (this->backgroundImg) this->texture->draw(*this->backgroundImg);
+
     for (unsigned int i = 0; i < this->btnCnt; i++) {
         Button* btn = this->buttons[i];
         if (btn) btn->draw(*(this->texture));
@@ -90,8 +94,8 @@ MolManager::MolManager() :
     temperature  (273.15)
     {}
 
-MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, double _pressY, double _temperature) : 
-    BaseManager  (_texture, _sprite),
+MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, double _pressY, double _temperature, sf::Sprite* backgroundImg) : 
+    BaseManager  (_texture, _sprite, backgroundImg),
     pressY       (_pressY),
     temperature  (_temperature)
 {
@@ -101,8 +105,8 @@ MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, double 
     listCtor(this->molecules, 1, 1);
 }
 
-MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List_t* _molecules, double _pressY, double _temperature) :
-    BaseManager  (_texture, _sprite),
+MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List_t* _molecules, double _pressY, double _temperature, sf::Sprite* backgroundImg) :
+    BaseManager  (_texture, _sprite, backgroundImg),
     molecules    (_molecules),
     pressY       (_pressY),
     temperature  (_temperature)
@@ -190,6 +194,8 @@ void MolManager::draw() {
     ON_ERROR(!this->texture || !this->sprite, "Drawable area was null",);
 
     texture->clear();
+
+    if (this->backgroundImg) texture->draw(*this->backgroundImg);
 
     // draw frame
     sf::RectangleShape frame = sf::RectangleShape(sf::Vector2f(texture->getSize().x - 2 * FRAME_WIDTH, texture->getSize().y - 2 * FRAME_WIDTH));
@@ -338,12 +344,11 @@ PlotManager::PlotManager(sf::RenderTexture* _texture,
                          Plot* _squarePlot,
                          Plot* _pressPlot,
                          sf::Sprite* backgroundImg) :
-    BaseManager  (_texture, _sprite),
+    BaseManager  (_texture, _sprite, backgroundImg),
     tempPlot     (_tempPlot),
     circlePlot   (_circlePlot),
     squarePlot   (_squarePlot),
-    pressPlot    (_pressPlot),
-    backgroundImg(backgroundImg)
+    pressPlot    (_pressPlot)
     {}
 
 PlotManager::~PlotManager() {

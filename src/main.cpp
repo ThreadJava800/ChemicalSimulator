@@ -79,14 +79,26 @@ int main() {
     CoordinatePlane pressPlane = CoordinatePlane(620, 240, 50, 50, 480, 480, 480, 540, &pressPlaneName, &pressPlaneUnit);
     Plot pressPlot = Plot(&pressPlane, 480);
 
-    sf::Texture background;
-    ON_ERROR(!background.loadFromFile(PLOT_BACK), "Can't open file", -1);
+    sf::Texture plotBackground;
+    ON_ERROR(!plotBackground.loadFromFile(PLOT_BACK), "Can't open file", -1);
     sf::Sprite plotBackgrSprite;
-    plotBackgrSprite.setTexture(background);
+    plotBackgrSprite.setTexture(plotBackground);
     plotBackgrSprite.setPosition(-300, 0);
 
-    UIManager   btnManager = UIManager  (&buttonTexture, &buttonSprite, buttons, BUTTON_CNT);
-    MolManager  molManager = MolManager (&moleculeTexture, &moleculeSprite, FRAME_WIDTH, 273.15);
+    sf::Texture btnBackground;
+    ON_ERROR(!btnBackground.loadFromFile(BTN_BACK), "Can't open file", -1);
+    sf::Sprite btnBackgrSprite;
+    btnBackgrSprite.setTexture(btnBackground);
+    btnBackgrSprite.setPosition(-50, -10);
+
+    sf::Texture molBackground;
+    ON_ERROR(!molBackground.loadFromFile(MOL_BACK), "Can't open file", -1);
+    sf::Sprite molBackgrSprite;
+    molBackgrSprite.setTexture(molBackground);
+    molBackgrSprite.setPosition(-50, -10);
+
+    UIManager   btnManager = UIManager  (&buttonTexture, &buttonSprite, buttons, BUTTON_CNT, &btnBackgrSprite);
+    MolManager  molManager = MolManager (&moleculeTexture, &moleculeSprite, FRAME_WIDTH, 273.15, &molBackgrSprite);
     PlotManager pltManager = PlotManager(&plotTexture, &plotSprite, &testPlt, &crclPlot, &sqrtPlt, &pressPlot, &plotBackgrSprite);
     Controller  bossOfGym  = Controller (&btnManager, &molManager, &pltManager);
 

@@ -85,6 +85,8 @@ void CircleMolecule::draw(sf::RenderTexture& texture) {
 
     sf::CircleShape shape(this->size);
     shape.setPosition(this->x, this->y);
+    shape.setOutlineColor(sf::Color::White);
+    shape.setOutlineThickness(1);
     shape.setFillColor(CIRCLE_COL);
 
     texture.draw(shape);
@@ -123,6 +125,8 @@ void SquareMolecule::draw(sf::RenderTexture& texture) {
 
     sf::RectangleShape shape(sf::Vector2f(this->size, this->size));
     shape.setPosition(this->x, this->y);
+    shape.setOutlineColor(sf::Color::White);
+    shape.setOutlineThickness(1);
     shape.setFillColor(SQUARE_COL);
 
     texture.draw(shape);
