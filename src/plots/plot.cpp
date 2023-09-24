@@ -1,10 +1,9 @@
 #include "plot.h"
 
-CoordinatePlane::CoordinatePlane(double xOrigin, double yOrigin, double xUnit, double yUnit,
-                                 double xStart,  double yStart,  double width, double height,
-                                 sf::Text*  yName  , sf::Text* yUnitTxt) :
-    xOrigin (xOrigin),
-    yOrigin (yOrigin),
+CoordinatePlane::CoordinatePlane(double xUnit,  double yUnit,
+                                 double xStart, double yStart,  
+                                 double width,  double height,
+                                 sf::Text* yName, sf::Text* yUnitTxt) :
     xUnit   (xUnit),
     yUnit   (yUnit),
     xStart  (xStart),
@@ -16,8 +15,6 @@ CoordinatePlane::CoordinatePlane(double xOrigin, double yOrigin, double xUnit, d
     {}
 
 CoordinatePlane::~CoordinatePlane() {
-    this->xOrigin  = NAN;
-    this->yOrigin  = NAN;
     this->xUnit    = NAN;
     this->yUnit    = NAN;
     this->xStart   = NAN;
@@ -28,14 +25,6 @@ CoordinatePlane::~CoordinatePlane() {
     this->yUnitTxt = nullptr;
 }
 
-double CoordinatePlane::getXOrigin() {
-    return this->xOrigin;
-}
-double CoordinatePlane::getYOrigin() {
-    ON_ERROR(!this, "Object pointer was null!", 0);
-
-    return this->yOrigin;
-}
 double CoordinatePlane::getXUnit() {
     ON_ERROR(!this, "Object pointer was null!", 0);
 
@@ -57,47 +46,6 @@ double CoordinatePlane::getYStart() {
     return this->yStart;
 }
 
-void CoordinatePlane::drawPoints(sf::RenderTexture& texture, const sf::Vector2f coordStart) {
-    this->yUnitTxt->setPosition(xOrigin + 5, yStart + yOrigin - yUnit);
-    texture.draw(*this->yUnitTxt);
-
-    // unit points on x axis
-    for (int i = xOrigin; i >= xStart; i -= xUnit) {
-        sf::RectangleShape point(sf::Vector2f(UNIT_POINT_RAD, UNIT_POINT_RAD));
-
-        point.setPosition (sf::Vector2f(i - UNIT_POINT_RAD / 2, yOrigin - UNIT_POINT_RAD / 2));
-        point.setFillColor(DEFAULT_UNIT_POINT_COL);
-
-        texture.draw(point);
-    }
-    for (int i = xOrigin; i <= width + xStart; i += xUnit) {
-        sf::RectangleShape point(sf::Vector2f(UNIT_POINT_RAD, UNIT_POINT_RAD));
-
-        point.setPosition(sf::Vector2f(i - UNIT_POINT_RAD / 2, yOrigin - UNIT_POINT_RAD / 2));
-        point.setFillColor(DEFAULT_UNIT_POINT_COL);
-
-        texture.draw(point);
-    }
-
-    // unit points on y axis
-    for (int i = yOrigin; i >= yStart; i -= yUnit) {
-        sf::RectangleShape point(sf::Vector2f(UNIT_POINT_RAD, UNIT_POINT_RAD));
-
-        point.setPosition(sf::Vector2f(xOrigin - UNIT_POINT_RAD / 2, i - UNIT_POINT_RAD / 2));
-        point.setFillColor(DEFAULT_UNIT_POINT_COL);
-
-        texture.draw(point);
-    }
-    for (int i = yOrigin; i < yStart + height + coordStart.y; i += yUnit) {
-        sf::RectangleShape point(sf::Vector2f(UNIT_POINT_RAD, UNIT_POINT_RAD));
-
-        point.setPosition(sf::Vector2f(xOrigin - UNIT_POINT_RAD / 2, i - UNIT_POINT_RAD / 2));
-        point.setFillColor(DEFAULT_UNIT_POINT_COL);
-
-        texture.draw(point);
-    }
-}
-
 void CoordinatePlane::drawFrame (sf::RenderTexture& texture) {
     sf::RectangleShape frame(sf::Vector2f(texture.getSize().x - 2 * FRAME_WIDTH, texture.getSize().y - 2 * FRAME_WIDTH));
     frame.setFillColor   (sf::Color::Transparent);
@@ -108,24 +56,24 @@ void CoordinatePlane::drawFrame (sf::RenderTexture& texture) {
 }
 
 void CoordinatePlane::draw(sf::RenderTexture& texture, const sf::Vector2f coordStart) {
-    sf::Vector2f oxStart = vecGraphToCoord(texture, *this, xStart + coordStart.x, yStart + this->yOrigin + coordStart.y, coordStart);
-    sf::Vector2f oxEnd   = vecGraphToCoord(texture, *this, xStart + coordStart.x + width, yStart + this->yOrigin + coordStart.y, coordStart);
+    sf::Vector2f oxStart = vecGraphToCoord(texture, *this, xStart + coordStart.x, yStart + coordStart.y, coordStart);
+    sf::Vector2f oxEnd   = vecGraphToCoord(texture, *this, xStart + coordStart.x + width, yStart + coordStart.y, coordStart);
     Vector       ox      = Vector(oxEnd.x, oxEnd.y, sf::Color::White);
 
-    sf::Vector2f oyStart = vecGraphToCoord(texture, *this,  this->xOrigin + coordStart.x, yStart + coordStart.y + height, coordStart);
-    sf::Vector2f oyEnd   = vecGraphToCoord(texture, *this,  this->xOrigin + coordStart.x, yStart + coordStart.y, coordStart);
+    sf::Vector2f oyStart = vecGraphToCoord(texture, *this,  coordStart.x, yStart + coordStart.y + height, coordStart);
+    sf::Vector2f oyEnd   = vecGraphToCoord(texture, *this,  coordStart.x, yStart + coordStart.y, coordStart);
     Vector       oy      = Vector(oyEnd.x, oyEnd.y, sf::Color::White);
 
     ox.draw(texture, *this, oxStart.x, oxStart.y);
     oy.draw(texture, *this, oyStart.x, oyStart.y);
 
-    sf::Vector2f namePos = sf::Vector2f(this->xOrigin, yStart);
+    sf::Vector2f namePos = sf::Vector2f(this->xStart, yStart);
     if (this->yName) { 
         this->yName->setPosition(namePos + sf::Vector2f(2, 15));
         texture.draw(*this->yName);
     }
 
-    drawPoints(texture, coordStart);
+    // drawPoints(texture, coordStart);
     drawFrame (texture);
 }
 
@@ -167,13 +115,13 @@ inline double Vector::len() const {
 }
 
 sf::Vector2f vecCoordToGraph(sf::RenderTexture& texture, CoordinatePlane& coordPlane, double x, double y) {
-    return sf::Vector2f(coordPlane.getXOrigin() + x * coordPlane.getXUnit(),
-                        coordPlane.getYOrigin() - y * coordPlane.getYUnit());
+    return sf::Vector2f(x * coordPlane.getXUnit(),
+                        y * coordPlane.getYUnit());
 }
 
 sf::Vector2f vecGraphToCoord(sf::RenderTexture& texture, CoordinatePlane& coordPlane, double x, double y, const sf::Vector2f coordStart) {
-    return sf::Vector2f((x - coordPlane.getXOrigin() - coordStart.x) / coordPlane.getXUnit(), 
-                        (coordPlane.getYOrigin() - y + coordStart.y) / coordPlane.getYUnit());
+    return sf::Vector2f((x - coordStart.x) / coordPlane.getXUnit(), 
+                        (y + coordStart.y) / coordPlane.getYUnit());
 }
 
 void Vector::setX(double x) {

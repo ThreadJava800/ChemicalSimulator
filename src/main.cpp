@@ -61,22 +61,22 @@ int main() {
 
     sf::Text testPlaneName = sf::Text(L" Temp.", font, 20);
     sf::Text testPlaneUnit = sf::Text(" 540K", font, 15);
-    CoordinatePlane testPlane = CoordinatePlane(240, 240, 50, 50, 0, 0, 480, 540, &testPlaneName, &testPlaneUnit);
+    CoordinatePlane testPlane = CoordinatePlane(50, 50, 0, 0, 480, 540, &testPlaneName, &testPlaneUnit);
     Plot testPlt = Plot(&testPlane, 480);
 
     sf::Text crclPlaneName = sf::Text(L" Circles", font, 20);
     sf::Text crclPlaneUnit = sf::Text(L" 5 c.", font, 15);
-    CoordinatePlane crclPlane = CoordinatePlane(620, 240, 50, 50, 480, 0, 480, 540, &crclPlaneName, &crclPlaneUnit);
+    CoordinatePlane crclPlane = CoordinatePlane(50, 50, 480, 0, 480, 540, &crclPlaneName, &crclPlaneUnit);
     Plot crclPlot = Plot(&crclPlane, 480);
 
     sf::Text sqrPlaneName = sf::Text(L" Squares", font, 20);
     sf::Text sqrPlaneUnit = sf::Text(L" 5 s.", font, 15);
-    CoordinatePlane sqrPlane = CoordinatePlane(240, 240, 50, 50, 0, 480, 480, 540, &sqrPlaneName, &sqrPlaneUnit);
+    CoordinatePlane sqrPlane = CoordinatePlane(50, 50, 0, 480, 480, 540, &sqrPlaneName, &sqrPlaneUnit);
     Plot sqrtPlt = Plot(&sqrPlane, 480);
 
     sf::Text pressPlaneName = sf::Text(L" Pressure", font, 20);
     sf::Text pressPlaneUnit = sf::Text(L" 1000 c.u.", font, 15);
-    CoordinatePlane pressPlane = CoordinatePlane(620, 240, 50, 50, 480, 480, 480, 540, &pressPlaneName, &pressPlaneUnit);
+    CoordinatePlane pressPlane = CoordinatePlane(50, 50, 480, 480, 480, 540, &pressPlaneName, &pressPlaneUnit);
     Plot pressPlot = Plot(&pressPlane, 480);
 
     sf::Texture plotBackground;
@@ -137,7 +137,7 @@ int main() {
         bossOfGym.update();
         if (++delay > FRAME_DELAY) {
             delay = 0;
-            bossOfGym.updatePlot((frameCnt++) % 480);
+            // bossOfGym.updatePlot((frameCnt++) % 480);
         }
 
         window.draw(moleculeSprite);

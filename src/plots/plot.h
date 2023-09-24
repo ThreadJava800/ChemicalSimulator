@@ -5,10 +5,9 @@
 
 class CoordinatePlane {
 private:
-    double xOrigin, yOrigin;
-    double xUnit  , yUnit;
-    double xStart , yStart;
-    double width  , height;
+    double xUnit,  yUnit;
+    double xStart, yStart;
+    double width,  height;
 
     sf::Text*  yName;
     sf::Text*  yUnitTxt;
@@ -17,17 +16,16 @@ private:
     void drawFrame (sf::RenderTexture& texture);
 
 public:
-    CoordinatePlane(double xOrigin, double yOrigin, double xUnit, double yUnit,
-                    double xStart,  double yStart,  double width, double height,
-                    sf::Text*  yName  , sf::Text* yUnitTxt);
+    CoordinatePlane(double xUnit,     double yUnit,
+                    double xStart,    double yStart,  
+                    double width,     double height,
+                    sf::Text*  yName, sf::Text* yUnitTxt);
     ~CoordinatePlane();
 
-    double getXOrigin();
-    double getYOrigin();
-    double getXUnit  ();
-    double getYUnit  ();
-    double getXStart ();
-    double getYStart ();
+    double getXUnit ();
+    double getYUnit ();
+    double getXStart();
+    double getYStart();
 
     void draw(sf::RenderTexture& texture, const sf::Vector2f coordStart);
 };
