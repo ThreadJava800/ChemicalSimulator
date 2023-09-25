@@ -26,6 +26,8 @@ public:
     double getYUnit ();
     double getXStart();
     double getYStart();
+    double getWidth ();
+    double getHeight();
 
     void draw(sf::RenderTexture& texture, const sf::Vector2f coordStart);
 };

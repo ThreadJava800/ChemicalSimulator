@@ -46,27 +46,28 @@ double CoordinatePlane::getYStart() {
     return this->yStart;
 }
 
+double CoordinatePlane::getWidth() {
+    ON_ERROR(!this, "Object pointer was null!", 0);
+
+    return this->width;
+}
+
+double CoordinatePlane::getHeight() {
+    ON_ERROR(!this, "Object pointer was null!", 0);
+
+    return this->height;
+}
+
 void CoordinatePlane::drawFrame (sf::RenderTexture& texture) {
-    sf::RectangleShape frame(sf::Vector2f(texture.getSize().x - 2 * FRAME_WIDTH, texture.getSize().y - 2 * FRAME_WIDTH));
+    sf::RectangleShape frame(sf::Vector2f(this->width - 2 * FRAME_WIDTH, this->height - 2 * FRAME_WIDTH));
     frame.setFillColor   (sf::Color::Transparent);
     frame.setOutlineColor(sf::Color::White);
     frame.setOutlineThickness(FRAME_WIDTH);
-    frame.setPosition(FRAME_WIDTH, FRAME_WIDTH);
+    frame.setPosition(this->xStart + FRAME_WIDTH, this->yStart + FRAME_WIDTH);
     texture.draw(frame);
 }
 
 void CoordinatePlane::draw(sf::RenderTexture& texture, const sf::Vector2f coordStart) {
-    sf::Vector2f oxStart = vecGraphToCoord(texture, *this, xStart + coordStart.x, yStart + coordStart.y, coordStart);
-    sf::Vector2f oxEnd   = vecGraphToCoord(texture, *this, xStart + coordStart.x + width, yStart + coordStart.y, coordStart);
-    Vector       ox      = Vector(oxEnd.x, oxEnd.y, sf::Color::White);
-
-    sf::Vector2f oyStart = vecGraphToCoord(texture, *this,  coordStart.x, yStart + coordStart.y + height, coordStart);
-    sf::Vector2f oyEnd   = vecGraphToCoord(texture, *this,  coordStart.x, yStart + coordStart.y, coordStart);
-    Vector       oy      = Vector(oyEnd.x, oyEnd.y, sf::Color::White);
-
-    ox.draw(texture, *this, oxStart.x, oxStart.y);
-    oy.draw(texture, *this, oyStart.x, oyStart.y);
-
     sf::Vector2f namePos = sf::Vector2f(this->xStart, yStart);
     if (this->yName) { 
         this->yName->setPosition(namePos + sf::Vector2f(2, 15));
@@ -251,5 +252,13 @@ void Plot::addPoint(sf::Vector2f& point) {
     ON_ERROR(!this->plane, "Plane object is null!",);
     ON_ERROR(!this->points, "Points are null!",);
 
-    this->points[(size++) % this->capacity] = point; 
+    if (this->size >= this->capacity - 1) {
+        for (size_t i = 0; i < this->capacity - 1; i++) {
+            this->points[i] = this->points[i + 1];
+            this->points[i].x--;
+        }
+        point.x = 960;
+        this->points[this->capacity - 1] = point;
+    }
+    else this->points[size++] = point; 
 }
