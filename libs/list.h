@@ -72,7 +72,7 @@ public:
     void remove(size_t index) {
         ON_ERROR(!values, "List was null",);
 
-        for (size_t i = index; i < size; i++) {
+        for (size_t i = index; i < size - 1; i++) {
             values[i] = values[i + 1];
         }
 

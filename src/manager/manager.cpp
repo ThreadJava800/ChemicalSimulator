@@ -237,6 +237,11 @@ void MolManager::checkCollisions() {
             tryCollide(i, j);
         }
     }
+
+    for (size_t i = 0; i < moleculeCount; i++) {
+        BaseMolecule* molecule = (*this->molecules)[i];
+        if (!molecule) this->molecules->remove(i);
+    }
 }
 
 void MolManager::tryCollide(long ind1, long ind2) {
