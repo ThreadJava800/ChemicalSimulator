@@ -60,7 +60,7 @@ double CoordinatePlane::getHeight() {
 
 void CoordinatePlane::drawUnits(sf::RenderTexture& texture, const sf::Vector2f coordStart) {
     char intToStr[MAX_UNIT_LEN];
-    sprintf(intToStr, "%.0lf", 0);
+    sprintf(intToStr, "%.1lf", 0);
 
     sf::Text unitTxt(intToStr, *font, 20);
     unitTxt.setColor(AXIS_COLOR);
@@ -68,12 +68,12 @@ void CoordinatePlane::drawUnits(sf::RenderTexture& texture, const sf::Vector2f c
 
     texture.draw(unitTxt);
 
-    sprintf(intToStr, "%.0lf", this->yUnit);
+    sprintf(intToStr, "%.1lf", this->yUnit);
     unitTxt.setString(intToStr);
     unitTxt.setPosition(this->xStart + FRAME_WIDTH, this->yStart + 2 * this->height / 3 - 4 * FRAME_WIDTH);
     texture.draw(unitTxt);
 
-    sprintf(intToStr, "%.0lf", 2 * this->yUnit);
+    sprintf(intToStr, "%.1lf", 2 * this->yUnit);
     unitTxt.setString(intToStr);
     unitTxt.setPosition(this->xStart + FRAME_WIDTH, this->yStart + this->height / 3 - 4 * FRAME_WIDTH);
     texture.draw(unitTxt);

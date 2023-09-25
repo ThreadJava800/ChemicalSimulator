@@ -157,7 +157,7 @@ uint MolManager::getMolTypeCount(MoleculeType type) {
 double MolManager::getPressure() {
     ON_ERROR(!this, "Object pointer was null!", 0);
 
-    return this->temperature / (this->getTexture()->getSize().x * (this->getTexture()->getSize().y - this->pressY));
+    return 10000 * this->temperature / (this->getTexture()->getSize().x * (this->getTexture()->getSize().y - this->pressY));
 }
 
 double MolManager::getPressY() {

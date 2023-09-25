@@ -88,6 +88,8 @@ public:
     T operator[](const size_t index) {
         ON_ERROR(!values, "List was null", T());
 
+        if (index >= capacity) return T();
+
         return values[index];
     }
 

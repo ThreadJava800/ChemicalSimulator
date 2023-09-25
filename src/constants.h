@@ -31,7 +31,7 @@ const size_t    FRAME_DELAY            = 1;
 const float     TEMP_COEFF             = 0.3;
 const float     CIRCLE_COEFF           = 4;
 const float     SQUARE_COEFF           = 20;
-const float     PRESS_COEFF            = 20000;
+const float     PRESS_COEFF            = 8;
 const int       MAX_UNIT_LEN           = 15;
 
 // files

@@ -74,7 +74,7 @@ int main() {
 
     sf::Text pressPlaneName = sf::Text(L" Pressure", font, 20);
     sf::Text pressPlaneUnit = sf::Text(L" 1000 c.u.", font, 15);
-    CoordinatePlane pressPlane = CoordinatePlane(50, 50, 0, 770, 960, 270, &pressPlaneName, &font);
+    CoordinatePlane pressPlane = CoordinatePlane(50, 12.3, 0, 770, 960, 270, &pressPlaneName, &font);
     Plot pressPlot = Plot(&pressPlane, 960);
 
     sf::Texture plotBackground;
