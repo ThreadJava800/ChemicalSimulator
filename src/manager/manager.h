@@ -10,7 +10,7 @@
 class MolManager;
 
 typedef bool (*CollideFunc)(BaseMolecule* mol1, BaseMolecule* mol2);
-typedef void (*ProceedFunc)(MolManager& manager, List<BaseMolecule*>* list, long ind1, long ind2);
+typedef void (*ProceedFunc)(MolManager& manager, List* list, long ind1, long ind2);
 
 class BaseManager {
 protected:
@@ -55,14 +55,14 @@ enum MOVE_DIR {
 
 class MolManager : public BaseManager {
 private:
-    List<BaseMolecule*>* molecules = nullptr;
+    List*   molecules = nullptr;
     double  pressY                 = 0;
     double  temperature            = 273.15;   // kelvins (0 degrees celsium)
 
 public:
     MolManager();
     MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, double _pressY, double _temperature, sf::Sprite* backgroundImg);
-    MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List<BaseMolecule*>* _molecules, double _pressY, double _temperature, sf::Sprite* backgroundImg);
+    MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List* _molecules, double _pressY, double _temperature, sf::Sprite* backgroundImg);
 
     ~MolManager();
 
@@ -146,9 +146,9 @@ bool collideCircles     (BaseMolecule* mol1,   BaseMolecule* mol2);
 bool collideSquareCircle(BaseMolecule* square, BaseMolecule* circle);
 bool collideSquares     (BaseMolecule* mol1,   BaseMolecule* mol2);
 
-void proceedCircles     (MolManager& manager, List<BaseMolecule*>* list, long ind1, long ind2);
-void proceedSquares     (MolManager& manager, List<BaseMolecule*>* list, long ind1, long ind2);
-void proceedCircleSquare(MolManager& manager, List<BaseMolecule*>* list, long circle, long square);
-void proceedSquareCircle(MolManager& manager, List<BaseMolecule*>* list, long square, long circle);
+void proceedCircles     (MolManager& manager, List* list, long ind1, long ind2);
+void proceedSquares     (MolManager& manager, List* list, long ind1, long ind2);
+void proceedCircleSquare(MolManager& manager, List* list, long circle, long square);
+void proceedSquareCircle(MolManager& manager, List* list, long square, long circle);
 
 #endif

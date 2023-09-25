@@ -101,10 +101,10 @@ MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, double 
 {
     ON_ERROR(!this, "Object pointer was null!",);
 
-    this->molecules = new List<BaseMolecule*>();
+    this->molecules = new List();
 }
 
-MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List<BaseMolecule*>* _molecules, double _pressY, double _temperature, sf::Sprite* backgroundImg) :
+MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List* _molecules, double _pressY, double _temperature, sf::Sprite* backgroundImg) :
     BaseManager  (_texture, _sprite, backgroundImg),
     molecules    (_molecules),
     pressY       (_pressY),
@@ -240,7 +240,7 @@ void MolManager::tryCollide(long ind1, long ind2) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
 
-    List<BaseMolecule*>* listPointer = this->molecules;
+    List* listPointer = this->molecules;
     ON_ERROR(ind1 > listPointer->getSize() || ind2 > listPointer->getSize(), "Overflow attempt",);
 
     BaseMolecule* molecule1 = (*listPointer)[ind1];
@@ -566,7 +566,7 @@ bool collideSquareCircle(BaseMolecule* square, BaseMolecule* circle) {
         
 }
 
-void proceedCircles(MolManager& manager, List<BaseMolecule*>* list, long ind1, long ind2) {
+void proceedCircles(MolManager& manager, List* list, long ind1, long ind2) {
     ON_ERROR(!list, "List pointer was null!",);
 
     CircleMolecule* molecule1 = (CircleMolecule*) (*list)[ind1];
@@ -583,7 +583,7 @@ void proceedCircles(MolManager& manager, List<BaseMolecule*>* list, long ind1, l
     delete molecule2;
 }
 
-void proceedSquares(MolManager& manager, List<BaseMolecule*>* list, long ind1, long ind2) {
+void proceedSquares(MolManager& manager, List* list, long ind1, long ind2) {
     ON_ERROR(!list, "List pointer was null!",);
 
     BaseMolecule* molecule1 = (*list)[ind1];
@@ -622,7 +622,7 @@ void proceedSquares(MolManager& manager, List<BaseMolecule*>* list, long ind1, l
     }
 }
 
-void proceedCircleSquare(MolManager& manager, List<BaseMolecule*>* list, long circle, long square) {
+void proceedCircleSquare(MolManager& manager, List* list, long circle, long square) {
     BaseMolecule* molecule1 = (*list)[circle];
 
     list->updateElem(NULL, circle);
@@ -631,7 +631,7 @@ void proceedCircleSquare(MolManager& manager, List<BaseMolecule*>* list, long ci
     delete molecule1;
 }
 
-void proceedSquareCircle(MolManager& manager, List<BaseMolecule*>* list, long square, long circle) {
+void proceedSquareCircle(MolManager& manager, List* list, long square, long circle) {
     ON_ERROR(!list, "List pointer was null!",);
 
     BaseMolecule* molecule2 = (*list)[circle];
