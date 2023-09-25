@@ -1,9 +1,7 @@
 #ifndef _LISTpp_h_
 #define _LISTpp_h_
 
-#include <iostream>
-
-#include "../src/objects/objects.h"
+#include "iostream"
 
 #ifndef ON_ERROR
 #define ON_ERROR(expr, errStr, retVal) {                 \
@@ -15,13 +13,12 @@
 
 #endif
 
-typedef BaseMolecule* Elem_t;
-
+template<typename T>
 class List {
 private:
-    Elem_t* values   = nullptr;
-    size_t  capacity = 0;
-    size_t  size     = 0;
+    T*     values   = nullptr;
+    size_t capacity = 0;
+    size_t size     = 0;
 
 public:
     List() :
@@ -29,20 +26,21 @@ public:
         capacity(1),
         size    (0)
         {
-            values = (Elem_t*) calloc(sizeof(Elem_t), 1);
+            values = (T*) calloc(sizeof(T), 1);
             ON_ERROR(!values, "Unable to allocate memory",);
         }
 
     List(size_t _capacity) :
+        values  (nullptr),
         capacity(_capacity),
         size    (0)
         {
-            values = (Elem_t*) calloc(sizeof(Elem_t), _capacity);
+            values = (T*) calloc(sizeof(T), _capacity);
             ON_ERROR(!values, "Unable to allocate memory",);
         }
 
     ~List() {
-        delete[] values;
+        if (values) free(values);
 
         capacity = 0;
         size     = 0;
@@ -57,11 +55,11 @@ public:
         return size;
     }
 
-    void pushBack(Elem_t elem) {
+    void pushBack(T elem) {
         ON_ERROR(!values, "List was null",);
 
         if (capacity <= size) {
-            values = (Elem_t*) realloc(values, capacity * 2 * sizeof(Elem_t));
+            values = (T*) realloc(values, capacity * 2 * sizeof(T));
             ON_ERROR(!values, "Unable to realloc mem",);
 
             capacity = 2 * capacity;
@@ -79,7 +77,7 @@ public:
         }
 
         if (size < capacity / 2 - 1) {
-            values = (Elem_t*) realloc(values, capacity / 2 * sizeof(Elem_t));
+            values = (T*) realloc(values, capacity / 2 * sizeof(T));
             ON_ERROR(!values, "Unable to realloc mem",);
 
             capacity /= 2;
@@ -87,13 +85,13 @@ public:
         size--;
     }
 
-    Elem_t operator[](const size_t index) {
-        ON_ERROR(!values, "List was null", nullptr);
+    T operator[](const size_t index) {
+        ON_ERROR(!values, "List was null", T());
 
         return values[index];
     }
 
-    void updateElem(Elem_t elem, size_t index) {
+    void updateElem(T elem, size_t index) {
         ON_ERROR(!values, "List was null",);
 
         values[index] = elem;

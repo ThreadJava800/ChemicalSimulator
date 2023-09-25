@@ -101,27 +101,30 @@ MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, double 
 {
     ON_ERROR(!this, "Object pointer was null!",);
 
-    this->molecules = new List();
+    this->molecules = new List<BaseMolecule*>();
 }
 
-MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List* _molecules, double _pressY, double _temperature, sf::Sprite* backgroundImg) :
+MolManager::MolManager(sf::RenderTexture* _texture, sf::Sprite* _sprite, List<BaseMolecule*>* _molecules, double _pressY, double _temperature, sf::Sprite* backgroundImg) :
     BaseManager  (_texture, _sprite, backgroundImg),
     molecules    (_molecules),
     pressY       (_pressY),
     temperature  (_temperature)
-    {}
+{
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->molecules = new List<BaseMolecule*>();
+}
 
 MolManager::~MolManager() {
     ON_ERROR(!this, "Object pointer was null!",);
 
     if (!(this->molecules)) return;
 
-    for (long i = 0; i <= this->molecules->getSize(); i++) {
+    for (size_t i = 0; i < this->molecules->getSize(); i++) {
         BaseMolecule* value = (*this->molecules)[i];
         if (value) delete value;
     }
 
-    this->molecules->~List();
     delete this->molecules;
 
     this->molecules     = nullptr;
@@ -140,8 +143,8 @@ uint MolManager::getMolTypeCount(MoleculeType type) {
 
     uint count = 0;
 
-    long moleculeCount = this->molecules->getSize();
-    for (long i = 0; i < moleculeCount; i++) {
+    size_t moleculeCount = this->molecules->getSize();
+    for (size_t i = 0; i < moleculeCount; i++) {
         BaseMolecule* molecule = (*this->molecules)[i];
         if (molecule) {
             if (molecule->getType() == type) count++;
@@ -168,7 +171,7 @@ void MolManager::moveAll() {
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
     ON_ERROR(!(this->texture), "Pointer to texture was null!",);
 
-    for (long i = 0; i <= this->molecules->getSize(); i++) {
+    for (size_t i = 0; i < this->molecules->getSize(); i++) {
         BaseMolecule* molecule = (*this->molecules)[i];
         if (molecule) molecule->move(*(this->texture), this->pressY, this->temperature);
     }
@@ -181,7 +184,7 @@ void MolManager::resizeAll() {
 
     long moleculeCount = this->molecules->getSize();
 
-    for (long i = 0; i < moleculeCount; i++) {
+    for (size_t i = 0; i < moleculeCount; i++) {
         BaseMolecule* molecule = (*this->molecules)[i];
         if (molecule) molecule->resize(*(this->texture));
     }
@@ -212,10 +215,10 @@ void MolManager::draw() {
     press.setPosition(FRAME_WIDTH, this->pressY);
     texture->draw(press);
 
-    long moleculeCount = this->molecules->getSize();
+    size_t moleculeCount = this->molecules->getSize();
 
     // draw molecules
-    for (long i = 0; i <= this->molecules->getSize(); i++) {
+    for (size_t i = 0; i < this->molecules->getSize(); i++) {
         BaseMolecule* molecule = (*this->molecules)[i];
         if (molecule) molecule->draw(*texture);
     }
@@ -227,10 +230,10 @@ void MolManager::checkCollisions() {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
 
-    long moleculeCount = this->molecules->getSize();
+    size_t moleculeCount = this->molecules->getSize();
 
-    for (long i = 0; i <= moleculeCount; i++) {
-        for (long j = i + 1; j <= moleculeCount; j++) {
+    for (size_t i = 0; i < moleculeCount; i++) {
+        for (size_t j = i + 1; j < moleculeCount; j++) {
             tryCollide(i, j);
         }
     }
@@ -240,17 +243,13 @@ void MolManager::tryCollide(long ind1, long ind2) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!(this->molecules), "Pointer to list was null!",);
 
-    List* listPointer = this->molecules;
+    List<BaseMolecule*>* listPointer = this->molecules;
     ON_ERROR(ind1 > listPointer->getSize() || ind2 > listPointer->getSize(), "Overflow attempt",);
 
     BaseMolecule* molecule1 = (*listPointer)[ind1];
     BaseMolecule* molecule2 = (*listPointer)[ind2];
 
     if (!molecule1 || !molecule2) return;
-
-    // listPointer->print();
-
-    std::cerr << &molecule1 << ' ' << &molecule2 << '\n';
 
     static const CollideFunc checkCollisionFuncs[2][2] = {
         {collideSquares, collideSquareCircle},
@@ -566,7 +565,7 @@ bool collideSquareCircle(BaseMolecule* square, BaseMolecule* circle) {
         
 }
 
-void proceedCircles(MolManager& manager, List* list, long ind1, long ind2) {
+void proceedCircles(MolManager& manager, List<BaseMolecule*>* list, long ind1, long ind2) {
     ON_ERROR(!list, "List pointer was null!",);
 
     CircleMolecule* molecule1 = (CircleMolecule*) (*list)[ind1];
@@ -576,6 +575,7 @@ void proceedCircles(MolManager& manager, List* list, long ind1, long ind2) {
     double createY = (molecule1->getY() + molecule2->getY()) / 2;
 
     list->pushBack(new SquareMolecule(createX, createY, molecule1->getWeight() + molecule2->getWeight()));
+    
     list->updateElem(NULL, ind1);
     list->updateElem(NULL, ind2);
 
@@ -583,7 +583,7 @@ void proceedCircles(MolManager& manager, List* list, long ind1, long ind2) {
     delete molecule2;
 }
 
-void proceedSquares(MolManager& manager, List* list, long ind1, long ind2) {
+void proceedSquares(MolManager& manager, List<BaseMolecule*>* list, long ind1, long ind2) {
     ON_ERROR(!list, "List pointer was null!",);
 
     BaseMolecule* molecule1 = (*list)[ind1];
@@ -622,7 +622,7 @@ void proceedSquares(MolManager& manager, List* list, long ind1, long ind2) {
     }
 }
 
-void proceedCircleSquare(MolManager& manager, List* list, long circle, long square) {
+void proceedCircleSquare(MolManager& manager, List<BaseMolecule*>* list, long circle, long square) {
     BaseMolecule* molecule1 = (*list)[circle];
 
     list->updateElem(NULL, circle);
@@ -631,7 +631,7 @@ void proceedCircleSquare(MolManager& manager, List* list, long circle, long squa
     delete molecule1;
 }
 
-void proceedSquareCircle(MolManager& manager, List* list, long square, long circle) {
+void proceedSquareCircle(MolManager& manager, List<BaseMolecule*>* list, long square, long circle) {
     ON_ERROR(!list, "List pointer was null!",);
 
     BaseMolecule* molecule2 = (*list)[circle];
