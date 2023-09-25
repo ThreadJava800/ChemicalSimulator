@@ -9,17 +9,17 @@ private:
     double xStart, yStart;
     double width,  height;
 
-    sf::Text*  yName;
-    sf::Text*  yUnitTxt;
+    sf::Text* yName;
+    sf::Font* font;
 
-    void drawPoints(sf::RenderTexture& texture, const sf::Vector2f coordStart);
-    void drawFrame (sf::RenderTexture& texture);
+    void drawUnits(sf::RenderTexture& texture, const sf::Vector2f coordStart);
+    void drawFrame(sf::RenderTexture& texture);
 
 public:
     CoordinatePlane(double xUnit,     double yUnit,
                     double xStart,    double yStart,  
                     double width,     double height,
-                    sf::Text*  yName, sf::Text* yUnitTxt);
+                    sf::Text*  yName, sf::Font* font);
     ~CoordinatePlane();
 
     double getXUnit ();

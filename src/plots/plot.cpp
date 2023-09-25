@@ -3,15 +3,15 @@
 CoordinatePlane::CoordinatePlane(double xUnit,  double yUnit,
                                  double xStart, double yStart,  
                                  double width,  double height,
-                                 sf::Text* yName, sf::Text* yUnitTxt) :
-    xUnit   (xUnit),
-    yUnit   (yUnit),
-    xStart  (xStart),
-    yStart  (yStart),
-    width   (width),
-    height  (height),
-    yName   (yName),
-    yUnitTxt(yUnitTxt)  
+                                 sf::Text* yName, sf::Font* font) :
+    xUnit (xUnit),
+    yUnit (yUnit),
+    xStart(xStart),
+    yStart(yStart),
+    width (width),
+    height(height),
+    yName (yName),
+    font  (font)
     {}
 
 CoordinatePlane::~CoordinatePlane() {
@@ -22,7 +22,7 @@ CoordinatePlane::~CoordinatePlane() {
     this->width    = NAN;
     this->height   = NAN;
     this->yName    = nullptr;
-    this->yUnitTxt = nullptr;
+    this->font     = nullptr;
 }
 
 double CoordinatePlane::getXUnit() {
@@ -58,6 +58,29 @@ double CoordinatePlane::getHeight() {
     return this->height;
 }
 
+void CoordinatePlane::drawUnits(sf::RenderTexture& texture, const sf::Vector2f coordStart) {
+    char intToStr[MAX_UNIT_LEN];
+    sprintf(intToStr, "%.0lf", 0);
+
+    sf::Text unitTxt(intToStr, *font, 20);
+    unitTxt.setColor(AXIS_COLOR);
+    unitTxt.setPosition(this->xStart + FRAME_WIDTH, this->yStart + this->height - 4 * FRAME_WIDTH);
+
+    texture.draw(unitTxt);
+
+    sprintf(intToStr, "%.0lf", this->yUnit);
+    unitTxt.setString(intToStr);
+    unitTxt.setPosition(this->xStart + FRAME_WIDTH, this->yStart + 2 * this->height / 3 - 4 * FRAME_WIDTH);
+    texture.draw(unitTxt);
+
+    sprintf(intToStr, "%.0lf", 2 * this->yUnit);
+    unitTxt.setString(intToStr);
+    unitTxt.setPosition(this->xStart + FRAME_WIDTH, this->yStart + this->height / 3 - 4 * FRAME_WIDTH);
+    texture.draw(unitTxt);
+
+    texture.display();
+}
+
 void CoordinatePlane::drawFrame (sf::RenderTexture& texture) {
     sf::RectangleShape frame(sf::Vector2f(this->width - 2 * FRAME_WIDTH, this->height - 2 * FRAME_WIDTH));
     frame.setFillColor   (sf::Color::Transparent);
@@ -70,12 +93,12 @@ void CoordinatePlane::drawFrame (sf::RenderTexture& texture) {
 void CoordinatePlane::draw(sf::RenderTexture& texture, const sf::Vector2f coordStart) {
     sf::Vector2f namePos = sf::Vector2f(this->xStart, yStart);
     if (this->yName) { 
-        this->yName->setPosition(namePos + sf::Vector2f(2, 15));
+        this->yName->setPosition(sf::Vector2f(FRAME_WIDTH, FRAME_WIDTH) + namePos + sf::Vector2f(2, 15));
         texture.draw(*this->yName);
     }
 
-    // drawPoints(texture, coordStart);
-    drawFrame (texture);
+    drawFrame(texture);
+    drawUnits(texture, coordStart);
 }
 
 Vector::Vector() :

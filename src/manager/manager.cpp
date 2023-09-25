@@ -406,10 +406,7 @@ void PlotManager::draw() {
     if (tempPlot)   tempPlot  ->draw(*(this->texture), this->sprite->getPosition());
     if (circlePlot) circlePlot->draw(*(this->texture), this->sprite->getPosition());
     if (squarePlot) squarePlot->draw(*(this->texture), this->sprite->getPosition());
-    if (pressPlot)  pressPlot ->draw(*(this->texture), this->sprite->getPosition());
-
-    //drawing frames
-    
+    if (pressPlot)  pressPlot ->draw(*(this->texture), this->sprite->getPosition());    
 
     this->texture->display();
 }
@@ -525,10 +522,10 @@ void Controller::updatePlot(size_t frameNum) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!this->molManager || !this->pltManager, "Manager pointer was null!",);
 
-    sf::Vector2f tempPoint    (frameNum, pltManager->getTempPlot  ()->getPlane()->getYStart() + pltManager->getTempPlot  ()->getPlane()->getHeight() - molManager->getTemperature()        * TEMP_COEFF);
-    sf::Vector2f circlePoint  (frameNum, pltManager->getCirclePlot()->getPlane()->getYStart() + pltManager->getCirclePlot()->getPlane()->getHeight() - molManager->getMolTypeCount(CIRCLE) * MOL_COEFF);
-    sf::Vector2f squarePoint  (frameNum, pltManager->getSquarePlot()->getPlane()->getYStart() + pltManager->getSquarePlot()->getPlane()->getHeight() - molManager->getMolTypeCount(SQUARE) * MOL_COEFF);
-    sf::Vector2f pressurePoint(frameNum, pltManager->getPressPlot ()->getPlane()->getYStart() + pltManager->getPressPlot ()->getPlane()->getHeight() - molManager->getPressure()           * PRESS_COEFF);
+    sf::Vector2f tempPoint    (FRAME_WIDTH + frameNum, pltManager->getTempPlot  ()->getPlane()->getYStart() + pltManager->getTempPlot  ()->getPlane()->getHeight() - molManager->getTemperature()        * TEMP_COEFF   - 2 * FRAME_WIDTH);
+    sf::Vector2f circlePoint  (FRAME_WIDTH + frameNum, pltManager->getCirclePlot()->getPlane()->getYStart() + pltManager->getCirclePlot()->getPlane()->getHeight() - molManager->getMolTypeCount(CIRCLE) * CIRCLE_COEFF - 2 * FRAME_WIDTH);
+    sf::Vector2f squarePoint  (FRAME_WIDTH + frameNum, pltManager->getSquarePlot()->getPlane()->getYStart() + pltManager->getSquarePlot()->getPlane()->getHeight() - molManager->getMolTypeCount(SQUARE) * SQUARE_COEFF - 2 * FRAME_WIDTH);
+    sf::Vector2f pressurePoint(FRAME_WIDTH + frameNum, pltManager->getPressPlot ()->getPlane()->getYStart() + pltManager->getPressPlot ()->getPlane()->getHeight() - molManager->getPressure()           * PRESS_COEFF  - 2 * FRAME_WIDTH);
 
     pltManager->drawBackground();
     pltManager->addPoints(tempPoint, circlePoint, squarePoint, pressurePoint);

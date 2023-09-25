@@ -11,7 +11,7 @@ const int          FRAME_WIDTH    = 10;
 const unsigned int DEFAULT_WEIGHT = 1;
 const sf::Color    CIRCLE_COL     = sf::Color::Blue;
 const sf::Color    SQUARE_COL     = sf::Color::Red;
-const unsigned int START_MOL_CNT  = 25;
+const unsigned int START_MOL_CNT  = 50;
 const double       TEMP_SHIFT     = 10;
 const double       PRESS_SHIFT    = 10;
 const double       START_IMPULSE  = 0.00001;
@@ -26,10 +26,13 @@ const float     UNIT_POINT_RAD         = 8;
 const double    ARROW_SIZE_COEF        = 0.1;
 const sf::Color DEFAULT_LINE_COLOR     = sf::Color::White;
 const sf::Color DEFAULT_UNIT_POINT_COL = sf::Color::Red;
-const size_t    FRAME_DELAY            = 10;
-const float     TEMP_COEFF             = 0.1;
-const float     MOL_COEFF              = 5;
+const sf::Color AXIS_COLOR             = sf::Color::Red;
+const size_t    FRAME_DELAY            = 1;
+const float     TEMP_COEFF             = 0.3;
+const float     CIRCLE_COEFF           = 4;
+const float     SQUARE_COEFF           = 20;
 const float     PRESS_COEFF            = 20000;
+const int       MAX_UNIT_LEN           = 15;
 
 // files
 const static char* DEFAULT_FONT = "assets/Arial.ttf";

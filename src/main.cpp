@@ -61,22 +61,20 @@ int main() {
 
     sf::Text testPlaneName = sf::Text(L" Temp.", font, 20);
     sf::Text testPlaneUnit = sf::Text(" 540K", font, 15);
-    CoordinatePlane testPlane = CoordinatePlane(50, 50, 0, 0, 960, 270, &testPlaneName, &testPlaneUnit);
+    CoordinatePlane testPlane = CoordinatePlane(50, 323, 0, 0, 960, 270, &testPlaneName, &font);
     Plot testPlt = Plot(&testPlane, 960);
 
     sf::Text crclPlaneName = sf::Text(L" Circles", font, 20);
-    sf::Text crclPlaneUnit = sf::Text(L" 5 c.", font, 15);
-    CoordinatePlane crclPlane = CoordinatePlane(50, 50, 0, 270, 960, 270, &crclPlaneName, &crclPlaneUnit);
+    CoordinatePlane crclPlane = CoordinatePlane(50, 25, 0, 250, 960, 270, &crclPlaneName, &font);
     Plot crclPlot = Plot(&crclPlane, 960);
 
     sf::Text sqrPlaneName = sf::Text(L" Squares", font, 20);
-    sf::Text sqrPlaneUnit = sf::Text(L" 5 s.", font, 15);
-    CoordinatePlane sqrPlane = CoordinatePlane(50, 50, 0, 540, 960, 270, &sqrPlaneName, &sqrPlaneUnit);
+    CoordinatePlane sqrPlane = CoordinatePlane(50, 5, 0, 500, 960, 270, &sqrPlaneName, &font);
     Plot sqrtPlt = Plot(&sqrPlane, 960);
 
     sf::Text pressPlaneName = sf::Text(L" Pressure", font, 20);
     sf::Text pressPlaneUnit = sf::Text(L" 1000 c.u.", font, 15);
-    CoordinatePlane pressPlane = CoordinatePlane(50, 50, 0, 810, 960, 270, &pressPlaneName, &pressPlaneUnit);
+    CoordinatePlane pressPlane = CoordinatePlane(50, 50, 0, 770, 960, 270, &pressPlaneName, &font);
     Plot pressPlot = Plot(&pressPlane, 960);
 
     sf::Texture plotBackground;
