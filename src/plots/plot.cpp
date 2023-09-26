@@ -4,25 +4,27 @@ CoordinatePlane::CoordinatePlane(double xUnit,  double yUnit,
                                  double xStart, double yStart,  
                                  double width,  double height,
                                  sf::Text* yName, sf::Font* font) :
-    xUnit (xUnit),
-    yUnit (yUnit),
-    xStart(xStart),
-    yStart(yStart),
-    width (width),
-    height(height),
-    yName (yName),
-    font  (font)
+    xUnit       (xUnit),
+    yUnit       (yUnit),
+    xStart      (xStart),
+    yStart      (yStart),
+    width       (width),
+    height      (height),
+    yName       (yName),
+    font        (font),
+    secondsCount(0)
     {}
 
 CoordinatePlane::~CoordinatePlane() {
-    this->xUnit    = NAN;
-    this->yUnit    = NAN;
-    this->xStart   = NAN;
-    this->yStart   = NAN;
-    this->width    = NAN;
-    this->height   = NAN;
-    this->yName    = nullptr;
-    this->font     = nullptr;
+    this->xUnit        = NAN;
+    this->yUnit        = NAN;
+    this->xStart       = NAN;
+    this->yStart       = NAN;
+    this->width        = NAN;
+    this->height       = NAN;
+    this->yName        = nullptr;
+    this->font         = nullptr;
+    this->secondsCount = 0;
 }
 
 double CoordinatePlane::getXUnit() {
@@ -58,7 +60,7 @@ double CoordinatePlane::getHeight() {
     return this->height;
 }
 
-void CoordinatePlane::drawUnits(sf::RenderTexture& texture, const sf::Vector2f coordStart) {
+void CoordinatePlane::drawYUnits(sf::RenderTexture& texture) {
     char intToStr[MAX_UNIT_LEN];
     sprintf(intToStr, "%.1lf", 0);
 
@@ -81,6 +83,10 @@ void CoordinatePlane::drawUnits(sf::RenderTexture& texture, const sf::Vector2f c
     texture.display();
 }
 
+void CoordinatePlane::drawXUnits(sf::RenderTexture& texture, const double duration) {
+
+}
+
 void CoordinatePlane::drawFrame (sf::RenderTexture& texture) {
     sf::RectangleShape frame(sf::Vector2f(this->width - 2 * FRAME_WIDTH, this->height - 2 * FRAME_WIDTH));
     frame.setFillColor   (sf::Color::Transparent);
@@ -90,15 +96,16 @@ void CoordinatePlane::drawFrame (sf::RenderTexture& texture) {
     texture.draw(frame);
 }
 
-void CoordinatePlane::draw(sf::RenderTexture& texture, const sf::Vector2f coordStart) {
+void CoordinatePlane::draw(sf::RenderTexture& texture, const double duration) {
     sf::Vector2f namePos = sf::Vector2f(this->xStart, yStart);
     if (this->yName) { 
         this->yName->setPosition(sf::Vector2f(FRAME_WIDTH, FRAME_WIDTH) + namePos + sf::Vector2f(2, 15));
         texture.draw(*this->yName);
     }
 
-    drawFrame(texture);
-    drawUnits(texture, coordStart);
+    drawFrame (texture);
+    drawYUnits(texture);
+    drawXUnits(texture, duration);
 }
 
 Vector::Vector() :
@@ -221,15 +228,17 @@ Vector operator!(const Vector& a) {
 }
 
 Plot::Plot() :
-    plane (nullptr),
-    points(nullptr),
-    size  (0)
+    plane   (nullptr),
+    points  (nullptr),
+    size    (0),
+    duration(0)
     {}
 
 Plot::Plot(CoordinatePlane* plane, unsigned int capacity) :
     plane   (plane),
     capacity(capacity),
-    size    (0)
+    size    (0),
+    duration(0)
 {
     ON_ERROR(!this, "Object pointer was null!",);
 
@@ -243,6 +252,7 @@ Plot::~Plot() {
     this->plane    = nullptr;
     this->capacity = 0;
     this->size     = 0;
+    this->duration = NAN;
 
     delete[] this->points;
     this->points   = nullptr;
@@ -254,13 +264,20 @@ CoordinatePlane* Plot::getPlane() {
     return this->plane;
 }
 
-void Plot::draw(sf::RenderTexture& texture, const sf::Vector2f coordStart) {
+void Plot::setDuration(const double _duration) {
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->duration = _duration;
+}
+
+void Plot::draw(sf::RenderTexture& texture) {
     ON_ERROR(!this, "Object pointer was null!",);
     ON_ERROR(!this->plane, "Plane object is null!",);
     ON_ERROR(!this->points, "Points are null!",);
 
-    this->plane->draw(texture, coordStart);
+    this->plane->draw(texture, this->duration);
 
+    // graphic itself
     sf::VertexArray drawPoints(sf::Points, this->size % this->capacity);
     for (unsigned int i = 0; i < this->size % this->capacity; i++) {
         drawPoints[i].position = points[i];

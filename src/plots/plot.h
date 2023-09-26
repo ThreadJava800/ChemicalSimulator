@@ -12,8 +12,11 @@ private:
     sf::Text* yName;
     sf::Font* font;
 
-    void drawUnits(sf::RenderTexture& texture, const sf::Vector2f coordStart);
-    void drawFrame(sf::RenderTexture& texture);
+    size_t secondsCount = 0;
+
+    void drawYUnits(sf::RenderTexture& texture);
+    void drawXUnits(sf::RenderTexture& texture, const double duration);
+    void drawFrame (sf::RenderTexture& texture);
 
 public:
     CoordinatePlane(double xUnit,     double yUnit,
@@ -29,7 +32,7 @@ public:
     double getWidth ();
     double getHeight();
 
-    void draw(sf::RenderTexture& texture, const sf::Vector2f coordStart);
+    void draw(sf::RenderTexture& texture, const double duration);
 };
 
 class Vector {
@@ -75,6 +78,8 @@ private:
     unsigned int     capacity = 0;
     unsigned int     size     = 0;
 
+    double duration     = NAN;
+
 public:
     Plot();
     Plot(CoordinatePlane* plane, unsigned int capacity);
@@ -83,7 +88,8 @@ public:
 
     CoordinatePlane* getPlane();
 
-    void draw(sf::RenderTexture& texture, const sf::Vector2f coordStart);
+    void setDuration(const double _duration);
+    void draw(sf::RenderTexture& texture);
     void addPoint(sf::Vector2f& point);
 };
 

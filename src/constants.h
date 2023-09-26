@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <ctime>
 
 // molecules constants
 const double       DEFAULT_SIZE   = 10;
@@ -11,7 +12,7 @@ const int          FRAME_WIDTH    = 10;
 const unsigned int DEFAULT_WEIGHT = 1;
 const sf::Color    CIRCLE_COL     = sf::Color::Blue;
 const sf::Color    SQUARE_COL     = sf::Color::Red;
-const unsigned int START_MOL_CNT  = 50;
+const unsigned int START_MOL_CNT  = 25;
 const double       TEMP_SHIFT     = 10;
 const double       PRESS_SHIFT    = 10;
 const double       START_IMPULSE  = 0.00001;

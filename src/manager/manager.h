@@ -89,6 +89,8 @@ private:
     Plot* squarePlot = nullptr;
     Plot* pressPlot  = nullptr;
 
+    void drawBackground();
+
 public:
     PlotManager();
     PlotManager(sf::RenderTexture* _texture, 
@@ -108,7 +110,7 @@ public:
 
     void draw() override;
 
-    void drawBackground();
+    void setXAxis (double duration);
     void addPoints(sf::Vector2f tempPoint, 
                    sf::Vector2f circlePoint, 
                    sf::Vector2f squarePoint, 
@@ -132,7 +134,7 @@ public:
 
     void registerClick();
     void update();
-    void updatePlot(size_t frameNum);
+    void updatePlot(size_t frameNum, double duration);
 };
 
 void addCircle(Controller& manager);
