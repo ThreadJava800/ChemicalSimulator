@@ -127,9 +127,9 @@ void CoordinatePlane::drawXUnits(sf::RenderTexture& texture, const double durati
         }
 
         if (this->frameCount >= width - 8 * FRAME_WIDTH)
-            unitTxt.setPosition(unitData->xCoord--, this->yStart + this->height - 4 * FRAME_WIDTH);
+            unitTxt.setPosition((unitData->xCoord--) + 2 * FRAME_WIDTH, this->yStart + this->height - 4 * FRAME_WIDTH);
         else
-            unitTxt.setPosition(unitData->xCoord,   this->yStart + this->height - 4 * FRAME_WIDTH);
+            unitTxt.setPosition(unitData->xCoord     + 2 * FRAME_WIDTH,   this->yStart + this->height - 4 * FRAME_WIDTH);
 
         sprintf(intToStr, "%ldsec.", unitData->xText);
         unitTxt.setString(intToStr);
