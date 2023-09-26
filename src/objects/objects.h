@@ -27,6 +27,7 @@ public:
 
     double       getX     ();
     double       getY     ();
+    double       getSpeed2();
     double       getSize  ();
     double       getWeight();
     MoleculeType getType  ();

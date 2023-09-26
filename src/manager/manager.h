@@ -67,6 +67,7 @@ public:
     ~MolManager();
 
     double getTemperature ();
+    double getEnergy      ();
     uint   getMolTypeCount(MoleculeType type);
     double getPressure    ();
     double getPressY      ();

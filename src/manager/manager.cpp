@@ -134,7 +134,25 @@ MolManager::~MolManager() {
 double MolManager::getTemperature() {
     ON_ERROR(!this, "Object pointer was null!", 0);
 
+    this->temperature = getEnergy() * 2 / 3 * MY_BOLTZMANN;
+
     return this->temperature;
+}
+
+double MolManager::getEnergy() {
+    ON_ERROR(!this, "Object pointer was null!", 0);
+
+    double energy = 0;
+
+    size_t listLen = this->molecules->getSize();
+    for (size_t i = 0; i < listLen; i++) {
+        BaseMolecule* mol = (*this->molecules)[i];
+        if (mol) {
+            energy += mol->getWeight() * mol->getSpeed2() / 2;
+        }
+    }
+
+    return energy;
 }
 
 uint MolManager::getMolTypeCount(MoleculeType type) {
@@ -156,8 +174,15 @@ uint MolManager::getMolTypeCount(MoleculeType type) {
 
 double MolManager::getPressure() {
     ON_ERROR(!this, "Object pointer was null!", 0);
+    ON_ERROR(!this->molecules, "List pointer was null!", 0);
+    ON_ERROR(!this->texture, "Texture pointer was null!", 0);
 
-    return 10000 * this->temperature / (this->getTexture()->getSize().x * (this->getTexture()->getSize().y - this->pressY));
+    // p = nkT
+    double N = this->molecules->getSize();
+    double V = (this->texture->getSize().y - this->pressY) * (this->texture->getSize().x);
+    double n = N / V;
+
+    return n * MY_BOLTZMANN * getTemperature();
 }
 
 double MolManager::getPressY() {
@@ -319,6 +344,7 @@ void MolManager::movePress(MOVE_DIR dir, double shift) {
 
 void MolManager::changeTemp(MOVE_DIR dir, double shift) {
     ON_ERROR(!this, "Object pointer was null!",);
+    ON_ERROR(!this->molecules, "List pointer was null!",);
 
     switch (dir)
     {
@@ -332,7 +358,15 @@ void MolManager::changeTemp(MOVE_DIR dir, double shift) {
         return;
     }
 
-    this->temperature += shift;
+    double coeff = sqrt((this->temperature + shift) / this->temperature);
+
+    size_t listSize = this->molecules->getSize();
+    for (size_t i = 0; i < listSize; i++) {
+        BaseMolecule* mol = (*this->molecules)[i];
+        if (mol) {
+            mol->setSpeed(coeff, coeff);
+        }
+    }
 }
 
 PlotManager::PlotManager() :
@@ -674,9 +708,6 @@ void pressUp(Controller& manager) {
     MolManager* molManager = manager.getMolManager();
     if (!molManager) return;
 
-    sf::RenderTexture* molText = molManager->getTexture();
-    if (!molText) return;
-
     molManager->movePress(UP, PRESS_SHIFT);
 }
 
@@ -684,28 +715,19 @@ void pressDown(Controller& manager) {
     MolManager* molManager = manager.getMolManager();
     if (!molManager) return;
 
-    sf::RenderTexture* molText = molManager->getTexture();
-    if (!molText) return;
-
     molManager->movePress(DOWN, PRESS_SHIFT);
 }
 
 void tempUp(Controller& manager) {
     MolManager* molManager = manager.getMolManager();
-    if (!molManager) return;     
-
-    sf::RenderTexture* molText = molManager->getTexture();
-    if (!molText) return;      
+    if (!molManager) return;      
 
     molManager->changeTemp(UP, TEMP_SHIFT);
 }
 
 void tempDown(Controller& manager) {
     MolManager* molManager = manager.getMolManager();
-    if (!molManager) return;     
-
-    sf::RenderTexture* molText = molManager->getTexture();
-    if (!molText) return;      
+    if (!molManager) return;          
      
     molManager->changeTemp(DOWN, TEMP_SHIFT);
 }

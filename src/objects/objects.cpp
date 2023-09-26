@@ -20,6 +20,12 @@ double BaseMolecule::getY() {
     return this->y;
 }
 
+double BaseMolecule::getSpeed2() {
+    ON_ERROR(!this, "Object pointer was null!", 0);
+
+    return velocityX * velocityX + velocityY * velocityY;
+}
+
 double BaseMolecule::getSize() {
     ON_ERROR(!this, "Object pointer was null!", 0);
     return this->size;

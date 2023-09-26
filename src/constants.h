@@ -19,6 +19,7 @@ const double       PRESS_SHIFT    = 10;
 const double       START_IMPULSE  = 0.00001;
 const double       START_VELOCITY = sqrt(START_IMPULSE);
 const double       PRS_MAX_SHIFT  = 250;
+const double       MY_BOLTZMANN   = 1e6;
 
 // button constants
 const unsigned int BUTTON_CNT     = 6;
@@ -33,7 +34,7 @@ const size_t    FRAME_DELAY            = 10;
 const float     TEMP_COEFF             = 0.3;
 const float     CIRCLE_COEFF           = 4;
 const float     SQUARE_COEFF           = 20;
-const float     PRESS_COEFF            = 8;
+const float     PRESS_COEFF            = 0.02;
 const int       MAX_UNIT_LEN           = 15;
 
 // files
