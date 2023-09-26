@@ -50,6 +50,10 @@ const static char* PRESS_UP     = "assets/pressUp.png";
 const static char* TEMP_DOWN    = "assets/tempDown.png";
 const static char* TEMP_UP      = "assets/tempUp.png";
 
+const double epsilon = 1e-9;
+#define COMP_DOUBLES(val1, val2) (fabs(val1 - val2) < epsilon)
+
+
 #define ON_ERROR(expr, errStr, retVal) {                 \
     if (expr) {                                           \
         fprintf(stderr, "FATAL ERROR: %s\n", errStr);      \

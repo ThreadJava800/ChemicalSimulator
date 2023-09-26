@@ -331,7 +331,7 @@ void Plot::draw(sf::RenderTexture& texture) {
     sf::VertexArray drawPoints(sf::Points, this->size % this->capacity);
     for (unsigned int i = 0; i < this->size % this->capacity; i++) {
         drawPoints[i].position = points[i];
-        drawPoints[i].color    = sf::Color::Yellow;
+        drawPoints[i].color    = sf::Color::White;
     }
 
     texture.draw(drawPoints);
