@@ -108,7 +108,7 @@ int main() {
     size_t frameCnt = 0;
     size_t delay    = 100;
 
-    std::clock_t start = std::clock();
+    std::chrono::_V2::system_clock::time_point start = std::chrono::high_resolution_clock::now();
 
     while (window.isOpen())
     {
@@ -137,7 +137,8 @@ int main() {
         bossOfGym.update();
         if (++delay > FRAME_DELAY) {
             delay = 0;
-            bossOfGym.updatePlot((frameCnt++) % 960, (std::clock() - start) / (double(CLOCKS_PER_SEC)));
+            std::chrono::_V2::system_clock::time_point end = std::chrono::high_resolution_clock::now();
+            bossOfGym.updatePlot((frameCnt++) % 960, std::chrono::duration_cast<std::chrono::seconds>(end - start).count());
         }
 
         window.draw(moleculeSprite);

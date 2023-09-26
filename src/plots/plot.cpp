@@ -103,8 +103,8 @@ void CoordinatePlane::drawXUnits(sf::RenderTexture& texture, const double durati
 
     // add new value to array
     size_t lastValueIndex = xAxisUnits->getSize() - 1;
-    if (secondsCount < duration && duration < secondsCount + 1) {
-        if (this->frameCount >= width - 4 * FRAME_WIDTH)
+    if (secondsCount <= duration && duration <= secondsCount + 1) {
+        if (this->frameCount >= width - 8 * FRAME_WIDTH)
             this->hasOverflowedX = true;
 
         XAxisTxt toAdd = {
@@ -126,7 +126,7 @@ void CoordinatePlane::drawXUnits(sf::RenderTexture& texture, const double durati
             xAxisUnits->remove(i);
         }
 
-        if (this->frameCount >= width - 4 * FRAME_WIDTH)
+        if (this->frameCount >= width - 8 * FRAME_WIDTH)
             unitTxt.setPosition(unitData->xCoord--, this->yStart + this->height - 4 * FRAME_WIDTH);
         else
             unitTxt.setPosition(unitData->xCoord,   this->yStart + this->height - 4 * FRAME_WIDTH);

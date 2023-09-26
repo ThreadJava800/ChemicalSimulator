@@ -18,8 +18,8 @@ private:
     sf::Font* font;
 
     struct XAxisTxt {
-        double xCoord = 0;
-        size_t xText  = 0;
+        double  xCoord = 0;
+        int64_t xText  = 0;
     };
 
     List<XAxisTxt>* xAxisUnits;

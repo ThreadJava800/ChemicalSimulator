@@ -5,6 +5,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <ctime>
+#include <chrono>
 
 // molecules constants
 const double       DEFAULT_SIZE   = 10;
