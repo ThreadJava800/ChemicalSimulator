@@ -4,16 +4,17 @@ CoordinatePlane::CoordinatePlane(double xUnit,  double yUnit,
                                  double xStart, double yStart,  
                                  double width,  double height,
                                  sf::Text* yName, sf::Font* font) :
-    xUnit       (xUnit),
-    yUnit       (yUnit),
-    xStart      (xStart),
-    yStart      (yStart),
-    width       (width),
-    height      (height),
-    yName       (yName),
-    font        (font),
-    secondsCount(0),
-    frameCount  (0)
+    xUnit         (xUnit),
+    yUnit         (yUnit),
+    xStart        (xStart),
+    yStart        (yStart),
+    width         (width),
+    height        (height),
+    yName         (yName),
+    font          (font),
+    secondsCount  (0),
+    frameCount    (0),
+    hasOverflowedX(false)
 {
     ON_ERROR(!this, "Object pointer was null!",);
 
@@ -21,16 +22,17 @@ CoordinatePlane::CoordinatePlane(double xUnit,  double yUnit,
 }
 
 CoordinatePlane::~CoordinatePlane() {
-    this->xUnit        = NAN;
-    this->yUnit        = NAN;
-    this->xStart       = NAN;
-    this->yStart       = NAN;
-    this->width        = NAN;
-    this->height       = NAN;
-    this->yName        = nullptr;
-    this->font         = nullptr;
-    this->secondsCount = 0;
-    this->frameCount   = 0;
+    this->xUnit          = NAN;
+    this->yUnit          = NAN;
+    this->xStart         = NAN;
+    this->yStart         = NAN;
+    this->width          = NAN;
+    this->height         = NAN;
+    this->yName          = nullptr;
+    this->font           = nullptr;
+    this->secondsCount   = 0;
+    this->frameCount     = 0;
+    this->hasOverflowedX = false;
 
     delete this->xAxisUnits;
     this->xAxisUnits = nullptr;
@@ -102,6 +104,9 @@ void CoordinatePlane::drawXUnits(sf::RenderTexture& texture, const double durati
     // add new value to array
     size_t lastValueIndex = xAxisUnits->getSize() - 1;
     if (secondsCount < duration && duration < secondsCount + 1) {
+        if (this->frameCount >= width - 4 * FRAME_WIDTH)
+            this->hasOverflowedX = true;
+
         XAxisTxt toAdd = {
             .xCoord = this->frameCount,
             .xText  = this->secondsCount
@@ -110,19 +115,23 @@ void CoordinatePlane::drawXUnits(sf::RenderTexture& texture, const double durati
         this->secondsCount++;
     }
 
-    this->frameCount  ++;
+    if (!this->hasOverflowedX) this->frameCount++;
 
     // draw units
-    size_t listSize = xAxisUnits->getSize();
-    for (size_t i = 0; i < listSize; i++) {
-        if (frameCount > width) {
-            unitTxt.setPosition((*xAxisUnits)[i].xCoord - (*xAxisUnits)[i].framesPresent, this->yStart + this->height - 4 * FRAME_WIDTH);
-            (*xAxisUnits)[i].framesPresent++;
-        }
-        else    
-            unitTxt.setPosition((*xAxisUnits)[i].xCoord, this->yStart + this->height - 4 * FRAME_WIDTH);
+    long listSize = xAxisUnits->getSize();
+    for (long i = listSize - 1; i >= 0; i--) {
+        XAxisTxt *unitData = &(*xAxisUnits)[i];
 
-        sprintf(intToStr, "%ldsec.", (*xAxisUnits)[i].xText);
+        if (unitData->xCoord < 0) {
+            xAxisUnits->remove(i);
+        }
+
+        if (this->frameCount >= width - 4 * FRAME_WIDTH)
+            unitTxt.setPosition(unitData->xCoord--, this->yStart + this->height - 4 * FRAME_WIDTH);
+        else
+            unitTxt.setPosition(unitData->xCoord,   this->yStart + this->height - 4 * FRAME_WIDTH);
+
+        sprintf(intToStr, "%ldsec.", unitData->xText);
         unitTxt.setString(intToStr);
         texture.draw(unitTxt);
     }

@@ -12,14 +12,14 @@ private:
         
     size_t secondsCount;
     size_t frameCount;
+    bool   hasOverflowedX;
 
     sf::Text* yName;
     sf::Font* font;
 
     struct XAxisTxt {
-        double xCoord          = 0;
-        size_t xText           = 0;
-        unsigned framesPresent = 0;
+        double xCoord = 0;
+        size_t xText  = 0;
     };
 
     List<XAxisTxt>* xAxisUnits;
