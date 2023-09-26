@@ -12,8 +12,13 @@ CoordinatePlane::CoordinatePlane(double xUnit,  double yUnit,
     height      (height),
     yName       (yName),
     font        (font),
-    secondsCount(0)
-    {}
+    secondsCount(0),
+    frameCount  (0)
+{
+    ON_ERROR(!this, "Object pointer was null!",);
+
+    this->xAxisUnits = new List<XAxisTxt>();
+}
 
 CoordinatePlane::~CoordinatePlane() {
     this->xUnit        = NAN;
@@ -25,6 +30,10 @@ CoordinatePlane::~CoordinatePlane() {
     this->yName        = nullptr;
     this->font         = nullptr;
     this->secondsCount = 0;
+    this->frameCount   = 0;
+
+    delete this->xAxisUnits;
+    this->xAxisUnits = nullptr;
 }
 
 double CoordinatePlane::getXUnit() {
@@ -84,7 +93,39 @@ void CoordinatePlane::drawYUnits(sf::RenderTexture& texture) {
 }
 
 void CoordinatePlane::drawXUnits(sf::RenderTexture& texture, const double duration) {
+    ON_ERROR(!this->xAxisUnits, "List was null",);
 
+    char intToStr[MAX_UNIT_LEN] = "";
+    sf::Text unitTxt(intToStr, *font, 20);
+    unitTxt.setColor(AXIS_COLOR); 
+
+    // add new value to array
+    size_t lastValueIndex = xAxisUnits->getSize() - 1;
+    if (secondsCount < duration && duration < secondsCount + 1) {
+        XAxisTxt toAdd = {
+            .xCoord = this->frameCount,
+            .xText  = this->secondsCount
+        };
+        xAxisUnits->pushBack(toAdd);
+        this->secondsCount++;
+    }
+
+    this->frameCount  ++;
+
+    // draw units
+    size_t listSize = xAxisUnits->getSize();
+    for (size_t i = 0; i < listSize; i++) {
+        if (frameCount > width) {
+            unitTxt.setPosition((*xAxisUnits)[i].xCoord - (*xAxisUnits)[i].framesPresent, this->yStart + this->height - 4 * FRAME_WIDTH);
+            (*xAxisUnits)[i].framesPresent++;
+        }
+        else    
+            unitTxt.setPosition((*xAxisUnits)[i].xCoord, this->yStart + this->height - 4 * FRAME_WIDTH);
+
+        sprintf(intToStr, "%ldsec.", (*xAxisUnits)[i].xText);
+        unitTxt.setString(intToStr);
+        texture.draw(unitTxt);
+    }
 }
 
 void CoordinatePlane::drawFrame (sf::RenderTexture& texture) {

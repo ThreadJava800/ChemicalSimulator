@@ -2,17 +2,27 @@
 #define _PLOT_h_
 
 #include "../constants.h"
+#include "../../libs/list.h"
 
 class CoordinatePlane {
 private:
     double xUnit,  yUnit;
     double xStart, yStart;
     double width,  height;
+        
+    size_t secondsCount;
+    size_t frameCount;
 
     sf::Text* yName;
     sf::Font* font;
 
-    size_t secondsCount = 0;
+    struct XAxisTxt {
+        double xCoord          = 0;
+        size_t xText           = 0;
+        unsigned framesPresent = 0;
+    };
+
+    List<XAxisTxt>* xAxisUnits;
 
     void drawYUnits(sf::RenderTexture& texture);
     void drawXUnits(sf::RenderTexture& texture, const double duration);

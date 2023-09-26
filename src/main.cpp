@@ -108,7 +108,7 @@ int main() {
     size_t frameCnt = 0;
     size_t delay    = 100;
 
-    std::clock_t chronometer = std::clock();
+    std::clock_t start = std::clock();
 
     while (window.isOpen())
     {
@@ -137,7 +137,7 @@ int main() {
         bossOfGym.update();
         if (++delay > FRAME_DELAY) {
             delay = 0;
-            bossOfGym.updatePlot((frameCnt++) % 960, chronometer);
+            bossOfGym.updatePlot((frameCnt++) % 960, (std::clock() - start) / (double(CLOCKS_PER_SEC)));
         }
 
         window.draw(moleculeSprite);
